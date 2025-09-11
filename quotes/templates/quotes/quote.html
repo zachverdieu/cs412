@@ -1,0 +1,10 @@
+<!-- hw/tempates/quotes/quote.html-->
+{% extends 'quotes/base.html' %}
+    {% block content %}
+
+    <p style="text-align: center;">
+        {{ quote}}
+    </p>
+    <img src="{{ picture}}" alt="Random picture of Barack Obama" style="display: block; margin: 0 auto; width: 400px;">
+
+    {% endblock %}

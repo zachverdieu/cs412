@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "hw", # From example
+    "quotes", # Assignment 1
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,23 @@
+<!-- hw/tempates/quotes/base.html-->
+ {% load static %}
+<html>
+    <head>
+        <title>Barack Obama Quotes</title>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        <nav>
+            <li><a href="{% url 'quote' %}">Quote of the Day</a></li>
+            <li><a href="{% url 'show_all' %}">All Quotes</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+        </nav>
+        
+        <!-- put page specific content here-->
+         {% block content %}
+         {% endblock %}
+        <footer>
+            Page created by zverdieu@bu.edu. <br>
+            Generated at: {{time}}. 
+        </footer>
+    </body>
+</html>
