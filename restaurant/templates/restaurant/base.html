@@ -1,0 +1,27 @@
+<!-- restaurant/templates/restaurant/main.html-->
+<!-- zverdieu@bu.edu 9/16/2025-->
+<!-- Description: Template for main page-->
+ {% load static %}
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Cheesecake Factory</title>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="{% url 'restaurant' %}">Home</a></li>
+                <li><a href="{% url 'order' %}">Menu/Order</a></li>
+            </ul>
+        </nav>
+        <!-- put page specific content here-->
+         {% block content %}
+         {% endblock %}
+        <footer>
+            Page created by zverdieu@bu.edu. <br>
+            Generated at: {{time}}. 
+        </footer>
+    </body>
+
+</html>
