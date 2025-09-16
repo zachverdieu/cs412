@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "hw", # From example
     "quotes", # Assignment 1
+    "formdata", # Week 3 Example
+    "restaurant", # Assignment 2
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,19 @@
+<!-- formdata/templates/formdata/base.html-->
+<!-- zverdieu@bu.edu 9/15/2025-->
+<!-- Description: Template for formdata page-->
+ {% load static %}
+<html>
+    <head>
+        <title>Form</title>
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+    </head>
+    <body>
+        
+         {% block content %}
+         {% endblock %}
+        <footer>
+            Page created by zverdieu@bu.edu. <br>
+            Generated at: {{time}}. 
+        </footer>
+    </body>
+</html>
