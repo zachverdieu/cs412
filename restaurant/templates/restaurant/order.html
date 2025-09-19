@@ -5,7 +5,70 @@
     {% block content %}
 
     <main>
-            <h1>Place an Order at Cheesecake!</h1>
+            <h1>Order One of Our World Famous Burgers!!</h1>
+
+            <div id="order_form">
+                <form action="{% url 'confirmation' %}" method="POST">
+                    {% csrf_token %}
+
+                    <!-- Menu Item checkboxes-->
+                    
+
+                        <label>
+                                <input type="checkbox" name="burger_1" value="{{ burger_1 }}">
+                                {{ burger_1 }} | ${{ burger_1_price }}
+                        </label>
+                        <select name="burger_1_size">
+                                <option value="single">Single</option>
+                                <option value="double">Double (+$3.00)</option>
+                        </select>
+                        <br>
+
+                        <label>
+                                <input type="checkbox" name="burger_2" value="{{ burger_2 }}">
+                                {{ burger_2 }} | ${{ burger_2_price }}
+                        </label>
+                        <br>
+
+                        <label>
+                                <input type="checkbox" name="burger_3" value="{{ burger_3 }}">
+                                {{ burger_3 }} | ${{ burger_3_price }}
+                        </label>
+                        <br>
+
+                        <label>
+                                <input type="checkbox" name="burger_4" value="{{ burger_4 }}">
+                                {{ burger_4 }} | ${{ burger_4_price }}
+                        </label>
+                        <br>
+
+                        <label>
+                                <input type="checkbox" name="burger_5" value="{{ burger_5 }}">
+                                {{ burger_5 }} | ${{ burger_5_price }}
+                        </label>
+                        <br>
+
+                        <h2>Today's Special:</h2>
+                        <label>
+                                <input type="checkbox" name="special" value="{{ special }}">
+                                {{ special }} | ${{ special_price }}
+                        </label>
+
+                    <h2>Special Instructions:</h2>
+
+                    <p>Please share any special instructions you'd like us to follow</p>
+                    <textarea name="special_instructions" rows="3" cols="60"></textarea><br>
+
+                    <h2>Customer Information:</h2>
+                    Name: <input type="text" name="name"><br>
+                    Phone #: <input type="text" name="phone"><br>
+                    Email: <input type="text" name="email"><br>
+
+
+                                        
+                    <input type="submit" name="submit">
+                </form>
+            </div>
     </main>
 
     {% endblock %}
