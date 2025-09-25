@@ -1,0 +1,25 @@
+<!-- blog/templates/blog/base.html-->
+<!-- zverdieu@bu.edu 9/25/2025-->
+<!-- Description: Base template for blog page-->
+ {% load static %}
+<html>
+    <head>
+        <title>Our Blog</title>
+        <link rel="stylesheet" href="{% static 'styles-blog.css' %}">
+    </head>
+    <body>
+        <head>
+            <h1>Our Blog</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'random' %}">Random</a></li>
+                    <li><a href="{% url 'show_all' %}">Show All</a></li>
+                </ul>
+            </nav>
+        </head>
+        
+         {% block content %}
+         {% endblock %}
+        
+    </body>
+</html>
