@@ -1,0 +1,25 @@
+<!-- File: templates/mini_insta/show_profile.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 9/25/2025
+ Description: Html template for show_profile page of mini_insta app
+ -->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<header>
+    <h1><a href="{% url 'show_all' %}">Mini Insta</a></h1>
+</header>
+
+<div class="single_ig_profile">
+    <div class="profile-header">
+        <img class="profile-pic" src="{{ profile.profile_image_url }}" alt="{{ profile.username }}">
+        <div class="profile-info">
+            <h2>{{ profile.username }}</h2>
+            <h3>{{ profile.display_name }}</h3>
+            <p>{{ profile.bio_text }}</p>
+            <p class="join-date">Joined on {{ profile.join_date }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

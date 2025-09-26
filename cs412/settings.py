@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "formdata", # Week 3 Example
     "restaurant", # Assignment 2
     "blog", # Week 4 Example
+    "mini_insta", # Assignment 3
 ]
 
 MIDDLEWARE = [

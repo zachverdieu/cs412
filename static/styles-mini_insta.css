@@ -1,0 +1,134 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #fafafa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 2rem;
+    text-align: center;
+}
+
+header h1 a {
+    text-decoration: none;
+    color: #333;
+    font-size: 28px;
+}
+
+/* Grid container for multiple profiles */
+.ig_profile_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Profile card */
+.ig_profile {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.ig_profile:hover {
+    transform: translateY(-5px);
+}
+
+.ig_profile img {
+    width: 100%;
+    height: 250px;       
+    object-fit: cover;   
+    display: block;
+}
+
+.ig_profile .non-picture_info {
+    padding: 12px;
+}
+
+.ig_profile h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.ig_profile h3 {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #555;
+}
+
+.ig_profile p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Single profile view */
+.single_ig_profile {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 24px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.single_ig_profile .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.single_ig_profile .profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}
+
+.single_ig_profile .profile-info h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.single_ig_profile .profile-info h3 {
+    margin: 0.2rem 0;
+    color: #555;
+    font-size: 18px;
+}
+
+.single_ig_profile .profile-info p {
+    margin: 0.3rem 0;
+    color: #333;
+    font-size: 15px;
+}
+
+.single_ig_profile .join-date {
+    font-size: 13px;
+    color: #777;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+    .single_ig_profile .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .single_ig_profile .profile-pic {
+        margin-bottom: 16px;
+    }
+}
