@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background: #fafafa;
+    background: black;;
     margin: 0;
     padding: 0;
     color: #333;
@@ -141,6 +141,37 @@ footer a:hover {
     text-decoration: underline;
 }
 
+/*to display follower/ing count and posts*/
+.account_info {
+    display: flex;
+    justify-content: space-around; 
+    align-items: center;
+    margin: 20px 0;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: #fdfdfd;
+}
+
+.account_info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+    font-weight: normal;
+}
+
+#heading {
+    width: 100%;         /* takes full width of parent */
+    display: flex;       /* enables flex layout */
+    justify-content: center; /* centers content horizontally */
+    align-items: center; /* optional: center vertically if height is set */
+    padding: 20px 0;     /* adds space above and below */
+    background-color: #fdfdfd; /* optional background */
+}
+
+#heading h1 {
+    margin: 0;           /* remove default h1 margin */
+}
 /* Responsive tweaks */
 @media (max-width: 600px) {
     .single_ig_profile .profile-header {
