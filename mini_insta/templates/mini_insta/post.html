@@ -1,0 +1,23 @@
+<!-- File: templates/mini_insta/post.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/3/2025
+ Description: Html template for individual post display page of mini_insta app
+ -->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<header>
+    <h1>Mini Insta</h1>
+</header>
+
+<div class="singlePost">
+    <!-- if this post has a first image, display that, if not, 
+     display default "no images" image-->
+    {% for photo in post.get_all_photos %}
+        <img src="{{photo.image_url}}" alt="Photo for {{post.profile}}">
+    {% endfor %}
+    <h3>{{post.caption}}</h3>
+    <p>posted at {{post.timestamp}}</p>
+</div>
+
+{% endblock %}

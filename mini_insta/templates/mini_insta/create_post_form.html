@@ -1,0 +1,26 @@
+<!-- File: templates/mini_insta/create_post_form.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/3/2025
+ Description: Html template for page with form to create new post
+ -->
+ {% extends 'mini_insta/base.html' %}
+
+ {% block content %}
+<div class="create-post-form">
+    <h1>Create a new Post</h1>
+
+    <form action="{% url 'mini_insta:create_post' profile.pk %}" method="POST">
+        {% csrf_token %}
+        <table>
+        {{form.as_table}}
+
+        <!-- HTML form input tag for image-->
+        Image Url: <input type="text" name="image_url">
+        </table>
+
+        <input type="submit" name="submit" value="Submit"><br>
+        <a href="{% url 'mini_insta:show_profile' profile.pk %}">Cancel</a>
+    </form>
+</div>
+
+
+{% endblock %}

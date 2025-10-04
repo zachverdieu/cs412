@@ -24,8 +24,25 @@
     <div class="account_info">
         <h3>Followers: 100</h3>
         <h3>Following: 10</h3>
-        <h3>Posts: None</h3>
+        <h3>Posts: {{ profile.get_all_posts.count }}</h3>
     </div>
+</div>
+<div class="posts">
+    <a href="{% url 'mini_insta:create_post' profile.pk %}"><button>Create a post!</button></a>
+    <!-- displaying all posts for this profile-->
+    {% for post in profile.get_all_posts %}
+        <div class="post">
+            {% if post.get_all_photos.first %}
+                <a href="{% url 'mini_insta:post' post.pk %}">
+                    <img src="{{post.get_all_photos.first.image_url}}" alt="Photo for {{post.caption}}">
+                </a>
+            {% else %}
+                <a href="{% url 'mini_insta:post' post.pk %}"></a>
+                    <img src="https://i.ytimg.com/vi/_TCqcOk2hfY/hqdefault.jpg" alt="No images">
+                </a>
+            {% endif %}
+        </div>
+    {% endfor %}
 </div>
 
 {% endblock %}

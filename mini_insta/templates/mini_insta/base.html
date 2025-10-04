@@ -12,7 +12,11 @@
          {% block content %}
          {% endblock %}
          <footer>
-            <a href="{% url 'mini_insta:show_all' %}">Mini Insta App</a><br>
+            <a href="{% url 'mini_insta:show_all' %}">Mini Insta App</a>
+            {% if profile %}
+            <a href="{% url 'mini_insta:create_post' profile.pk %}" >Create Post</a><br>
+            {% endif %}
+            
             Page created by zverdieu@bu.edu. <br>
         </footer>
         
