@@ -37,7 +37,7 @@
                     <img src="{{post.get_all_photos.first.image_url}}" alt="Photo for {{post.caption}}">
                 </a>
             {% else %}
-                <a href="{% url 'mini_insta:post' post.pk %}"></a>
+                <a href="{% url 'mini_insta:post' post.pk %}">
                     <img src="https://i.ytimg.com/vi/_TCqcOk2hfY/hqdefault.jpg" alt="No images">
                 </a>
             {% endif %}
