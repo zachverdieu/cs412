@@ -3,9 +3,9 @@
 # Description: views for mini_insta application
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import *
-from .forms import CreatePostForm, UpdateProfileForm
+from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 
 # Create your views here.
 class ProfileListView(ListView):
@@ -85,3 +85,44 @@ class CreatePostView(CreateView):
 
 
         return super().form_valid(form)
+
+class DeletePostView(DeleteView):
+    '''View class to delete a post on a profile'''
+
+    model = Post
+    template_name = "mini_insta/delete_post_form.html"
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        '''Return a dictionary containing context variables for use in this template'''
+
+        # superclass method
+        context = super().get_context_data()
+
+        pk = self.kwargs['pk']
+        post = Post.objects.get(pk=pk)
+
+        profile = post.profile
+
+        context['post'] = post
+        context['profile'] = profile
+        return context
+
+    def get_success_url(self):
+        '''Provide url to redirect to after deleting a post'''
+
+        pk = self.kwargs['pk']
+        post = Post.objects.get(pk=pk)
+
+
+        return reverse('mini_insta:show_profile', kwargs = {'pk': post.profile.pk})
+
+class UpdatePostView(UpdateView):
+    '''View to handle update of a post based on its PK'''
+
+    model = Post
+    form_class = UpdatePostForm
+    template_name = 'mini_insta/update_post_form.html'
+    context_object_name = 'post'
+
+    

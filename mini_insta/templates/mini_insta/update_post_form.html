@@ -1,0 +1,30 @@
+<!-- File: templates/mini_insta/update_post_form.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/10/2025
+ Description: Html template for page with form to update a post
+ -->
+ {% extends 'mini_insta/base.html' %}
+
+ {% block content %}
+<header>
+    <h1>Update this post by {{post.profile.username}}</h1>
+</header>
+<div class="update-form">
+
+    <form action="{% url 'mini_insta:update_post' post.pk %}" method="POST" 
+    enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+        {{form.as_table}}
+
+        </table>
+
+        <input type="submit" name="update_post" value="Update" class="button"><br>
+    </form>
+    <form action="{% url 'mini_insta:post' post.pk %}" method="Get">
+        {% csrf_token %}
+        <input type="submit" value="Cancel" class="button">
+    </form>
+</div>
+
+
+{% endblock %}

@@ -28,7 +28,7 @@ class Profile(models.Model):
         return posts
 
     def get_absolute_url(self):
-        '''return URL to display 1 instance of thsi object'''
+        '''return URL to display 1 instance of this object'''
 
         return reverse('mini_insta:show_profile', kwargs = {'pk': self.pk})
 
@@ -50,6 +50,12 @@ class Post(models.Model):
 
         photos = Photo.objects.filter(post=self)
         return photos
+
+    def get_absolute_url(self):
+        '''return URL to display 1 instance of this object'''
+
+        return reverse('mini_insta:post', kwargs = {'pk': self.pk})
+
 
 class Photo(models.Model):
     '''Encapsulate idea of an immage associated with a post'''
