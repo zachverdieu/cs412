@@ -14,7 +14,7 @@
     <!-- if this post has a first image, display that, if not, 
      display default "no images" image-->
     {% for photo in post.get_all_photos %}
-        <img src="{{photo.image_url}}" alt="Photo for {{post.profile}}">
+        <img src="{{photo.get_image_url}}" alt="Photo for '{{post.caption}}' by {{post.profile}}">
     {% endfor %}
     <h3>{{post.caption}}</h3>
     <p>posted at {{post.timestamp}}</p>

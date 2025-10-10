@@ -64,9 +64,16 @@ class CreatePostView(CreateView):
         post = form.save()
 
         # if image exists, save it as a new instance of photo model attached to post
-        image_url = self.request.POST['image_url']
-        if image_url:
-            photo = Photo(post=post, image_url=image_url)
+        
+        # image_url = self.request.POST['image_url']
+        # if image_url:
+        #     photo = Photo(post=post, image_url=image_url)
+        #     photo.save()
+
+        files = self.request.FILES.getlist('image')
+        for file in files:
+            photo = Photo(post=post, image_file=file)
             photo.save()
+
 
         return super().form_valid(form)

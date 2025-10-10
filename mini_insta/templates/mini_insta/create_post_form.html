@@ -8,17 +8,22 @@
 <div class="create-post-form">
     <h1>Create a new Post</h1>
 
-    <form action="{% url 'mini_insta:create_post' profile.pk %}" method="POST">
+    <form action="{% url 'mini_insta:create_post' profile.pk %}" method="POST" 
+    enctype="multipart/form-data">
         {% csrf_token %}
         <table>
         {{form.as_table}}
 
         <!-- HTML form input tag for image-->
-        Image Url: <input type="text" name="image_url">
+        <!-- Image Url: <input type="text" name="image_url"> -->
+        Image File(s): <input type="file" name="image" multiple>
         </table>
 
         <input type="submit" name="submit" value="Submit"><br>
-        <a href="{% url 'mini_insta:show_profile' profile.pk %}">Cancel</a>
+    </form>
+    <form action="{% url 'mini_insta:show_profile' profile.pk %}" method="Get">
+        {% csrf_token %}
+        <input type="submit" value="Cancel">
     </form>
 </div>
 

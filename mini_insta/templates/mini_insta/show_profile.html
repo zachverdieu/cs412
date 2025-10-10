@@ -34,7 +34,7 @@
         <div class="post">
             {% if post.get_all_photos.first %}
                 <a href="{% url 'mini_insta:post' post.pk %}">
-                    <img src="{{post.get_all_photos.first.image_url}}" alt="Photo for {{post.caption}}">
+                    <img src="{{post.get_all_photos.first.get_image_url}}" alt="Photo for {{post.caption}}">
                 </a>
             {% else %}
                 <a href="{% url 'mini_insta:post' post.pk %}">

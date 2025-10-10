@@ -1,0 +1,21 @@
+<!-- blog/update_article_form.html
+    display HTML form to update an existing article object-->
+{% extends 'blog/base.html' %}
+
+ {% block content %}
+<h1>Update Article</h1>
+
+<form action="{% url 'blog:update_article' article.pk %}" method="POST"
+    enctype="multipart/form-data">
+    {% csrf_token %}
+    <table>
+    {{form.as_table}}
+    </table>
+
+    <input type="submit" name="submit" value="Update">
+    <form action="{% url 'blog:article' article.pk}" method="GET">
+        <input type="submit" value="Cancel">
+    </form>
+</form>
+
+{% endblock %}
