@@ -2,6 +2,7 @@
 # Author: Zacharie Verdieu (zverdieu@bu.edu), 9/25/2025
 # Description: File creating models for mini_insta
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -25,6 +26,11 @@ class Profile(models.Model):
 
         posts = Post.objects.filter(profile=self)
         return posts
+
+    def get_absolute_url(self):
+        '''return URL to display 1 instance of thsi object'''
+
+        return reverse('mini_insta:show_profile', kwargs = {'pk': self.pk})
 
 class Post(models.Model):
     '''Encapsulate idea of a post to a user's profile'''

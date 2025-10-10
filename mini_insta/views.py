@@ -3,9 +3,9 @@
 # Description: views for mini_insta application
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import *
-from .forms import CreatePostForm
+from .forms import CreatePostForm, UpdateProfileForm
 
 # Create your views here.
 class ProfileListView(ListView):
@@ -21,6 +21,14 @@ class ProfileDetailView(DetailView):
     model = Profile
     template_name = "mini_insta/show_profile.html"
     context_object_name = "profile"
+
+class UpdateProfileView(UpdateView):
+    '''View to handle update of a profile based on its PK'''
+
+    model = Profile
+    form_class = UpdateProfileForm
+    template_name = 'mini_insta/update_profile_form.html'
+    conext_object_name = "profile"
 
 class PostDetailView(DetailView):
     '''Display a single post'''

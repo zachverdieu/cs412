@@ -27,8 +27,9 @@
         <h3>Posts: {{ profile.get_all_posts.count }}</h3>
     </div>
 </div>
+<a href="{% url 'mini_insta:update_profile' profile.pk %}" class="button">Update Profile</a>
+<a href="{% url 'mini_insta:create_post' profile.pk %}" class = "button">Create a post!</a>
 <div class="posts">
-    <a href="{% url 'mini_insta:create_post' profile.pk %}"><button>Create a post!</button></a>
     <!-- displaying all posts for this profile-->
     {% for post in profile.get_all_posts %}
         <div class="post">

@@ -13,3 +13,11 @@ class CreatePostForm(forms.ModelForm):
 
         model = Post
         fields = ['caption']
+
+class UpdateProfileForm(forms.ModelForm):
+    '''A form to update an existing profile'''
+    class Meta:
+        '''associate form with database model'''
+
+        model = Profile
+        fields = ['display_name', 'profile_image_url', 'bio_text']
