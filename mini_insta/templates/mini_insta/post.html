@@ -9,6 +9,12 @@
 <header>
     <a href="{% url 'mini_insta:show_all' %}"><h1>Mini Insta</h1></a>
 </header>
+<nav>
+    <ul>
+        <li><a href="{% url 'mini_insta:show_feed' post.profile.pk %}">Home</a></li>
+        <li><a href="{% url 'mini_insta:search' post.profile.pk %}">Search</a></li>
+    </ul>
+</nav>
 
 <a href="{% url 'mini_insta:delete_post' post.pk %}" class="button">Delete</a>
 <a href="{% url 'mini_insta:update_post' post.pk %}" class="button">Update</a>
@@ -19,8 +25,17 @@
     {% for photo in post.get_all_photos %}
         <img src="{{photo.get_image_url}}" alt="Photo for '{{post.caption}}' by {{post.profile}}">
     {% endfor %}
+    {% if post.get_likes %}
+    <h5>Liked by <strong>{{post.get_likes.first.profile.username}}</strong> and {{post.get_likes.count|add:"-1"}} others</h5>
+    {% endif %}
     <h3>{{post.caption}}</h3>
     <p>posted at {{post.timestamp}}</p>
+    <h1>Comments:</h1>
+
+    {% for comment in post.get_all_comments %}
+        <p>{{comment.profile.display_name}}</p>
+        <h3>{{comment.text}}</h3><br>
+    {% endfor %}
 </div>
 
 {% endblock %}

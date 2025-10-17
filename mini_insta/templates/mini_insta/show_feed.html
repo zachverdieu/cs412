@@ -1,0 +1,49 @@
+<!-- File: templates/mini_insta/show_feed.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/17/2025
+ Description: Html template for show_feed page of mini_insta app
+ -->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<header>
+    <a href="{% url 'mini_insta:show_all' %}"><h1>Mini Insta</h1></a>
+</header>
+<nav>
+    <ul>
+        <li><a href="{% url 'mini_insta:search' profile.pk %}">Search</a></li>
+    </ul>
+</nav>
+<h1 style="text-align: center;">{{profile.username}}'s Feed</h1>
+<a href="{% url 'mini_insta:show_profile' profile.pk %}" class="button">Back to {{profile.username}}'s page</a>
+<div class="feed-posts">
+    <!-- displaying all posts in this profile's feed-->
+    {% for post in profile.get_post_feed %}
+        <div class="feed-post">
+            <h2>{{post.profile.username}}</h2>
+            <img src="{{post.profile.profile_image_url}}" alt="Photo for {{post.profile}}" class="profile_img">
+            {% if post.get_all_photos.first %}
+                <a href="{% url 'mini_insta:post' post.pk %}">
+                    <img src="{{post.get_all_photos.first.get_image_url}}" alt="Photo for {{post.caption}}">
+                </a>
+            {% else %}
+                <a href="{% url 'mini_insta:post' post.pk %}">
+                    <img src="https://i.ytimg.com/vi/_TCqcOk2hfY/hqdefault.jpg" alt="No images">
+                </a>
+            {% endif %}
+            {% if post.get_likes %}
+            <h5>Liked by <strong>{{post.get_likes.first.profile.username}}</strong> and {{post.get_likes.count|add:"-1"}} others</h5>
+            {% endif %}
+            <h3>{{post.caption}}</h3>
+            <p>posted at {{post.timestamp}}</p>
+            <h1>Comments:</h1>
+
+            {% for comment in post.get_all_comments %}
+                <p>{{comment.profile.display_name}}</p>
+                <h3>{{comment.text}}</h3><br>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

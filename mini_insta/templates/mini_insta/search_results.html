@@ -1,0 +1,52 @@
+<!-- File: templates/mini_insta/create_post_form.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/3/2025
+ Description: Html template for page with form to create new post
+ -->
+ {% extends 'mini_insta/base.html' %}
+
+ {% block content %}
+<header>
+    <h1>Your Search: {{query}}</h1>
+    <h3><a href="{% url 'mini_insta:search' profile.pk %}" class="button">New Search</a></h3>
+</header>
+<h2>Profiles matching your search:</h2>
+<div class="ig_profile_grid">
+    {% if profiles %}
+        {% for profile in profiles %}
+        <div class="ig_profile">
+            <a href="{% url 'mini_insta:show_profile' profile.pk %}">
+                <img src="{{ profile.profile_image_url }}" alt="">
+            </a>
+            <div class="non-picture_info">
+                <h2>{{ profile.username }}</h2>
+                <h3>{{ profile.display_name }}</h3>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <h3>None</h3>
+    {% endif %}
+</div>
+<h2>Posts matching your search:</h2>
+<div class="posts">
+    {% if posts %}
+        {% for post in posts %}
+        <div class="post">
+            {% if post.get_all_photos.first %}
+                <a href="{% url 'mini_insta:post' post.pk %}">
+                    <img src="{{post.get_all_photos.first.get_image_url}}" alt="Photo for {{post.caption}}">
+                </a>
+            {% else %}
+                <a href="{% url 'mini_insta:post' post.pk %}">
+                    <img src="https://i.ytimg.com/vi/_TCqcOk2hfY/hqdefault.jpg" alt="No images">
+                </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <h3>None</h3>
+    {% endif %}
+</div>
+
+
+{% endblock %}

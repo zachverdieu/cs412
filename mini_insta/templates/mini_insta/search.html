@@ -1,0 +1,22 @@
+<!-- File: templates/mini_insta/search.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/17/2025
+ Description: Html template for page to search for user profiles/posts
+ -->
+ {% extends 'mini_insta/base.html' %}
+
+ {% block content %}
+<header>
+    <h1>Search for user profiles or posts</h1>
+</header>
+<div class="search-form">
+    <form action="" method="GET">
+        <label for="searchbox">Search: </label><input type="text" id="searchbox" name="query">
+        <input type="submit" value="Submit" class="button">
+    </form>
+    <form action="{% url 'mini_insta:show_profile' profile.pk %}" method="Get">
+        <input type="submit" value="Cancel" class="button">
+    </form>
+</div>
+
+
+{% endblock %}

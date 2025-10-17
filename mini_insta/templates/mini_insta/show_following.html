@@ -1,0 +1,33 @@
+<!-- File: templates/mini_insta/show_following.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/17/2025
+ Description: Html template for show_following page of mini_insta app
+ -->
+
+{% extends 'mini_insta/base.html' %}
+
+{% block content %}
+<header>
+    <a href="{% url 'mini_insta:show_all' %}"><h1>Mini Insta</h1></a>
+</header>
+<nav>
+    <ul>
+        <li><a href="{% url 'mini_insta:show_feed' profile.pk %}">Home</a></li>
+        <li><a href="{% url 'mini_insta:search' profile.pk %}">Search</a></li>
+    </ul>
+</nav>
+<div class="ig_profile_grid">
+    {% for profile in profile.get_following %}
+    <!-- display profiles as cards in a grid-->
+        <div class="ig_profile">
+            <a href="{% url 'mini_insta:show_profile' profile.pk %}">
+                <img src="{{ profile.profile_image_url }}" alt="">
+            </a>
+            <div class="non-picture_info">
+                <h2>{{ profile.username }}</h2>
+                <h3>{{ profile.display_name }}</h3>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

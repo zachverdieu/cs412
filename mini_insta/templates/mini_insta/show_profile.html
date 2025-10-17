@@ -9,6 +9,12 @@
 <header>
     <a href="{% url 'mini_insta:show_all' %}"><h1>Mini Insta</h1></a>
 </header>
+<nav>
+    <ul>
+        <li><a href="{% url 'mini_insta:show_feed' profile.pk %}">Home</a></li>
+        <li><a href="{% url 'mini_insta:search' profile.pk %}">Search</a></li>
+    </ul>
+</nav>
 
 <div class="single_ig_profile">
     <div class="profile-header">
@@ -22,8 +28,8 @@
     </div>
     <!-- placeholders for additional account information-->
     <div class="account_info">
-        <h3>Followers: 100</h3>
-        <h3>Following: 10</h3>
+        <h3><a href="{% url 'mini_insta:show_followers' profile.pk %}">Followers:</a> {{profile.get_num_followers}}</h3>
+        <h3><a href="{% url 'mini_insta:show_following' profile.pk %}">Following:</a> {{profile.get_num_following}}</h3>
         <h3>Posts: {{ profile.get_all_posts.count }}</h3>
     </div>
 </div>

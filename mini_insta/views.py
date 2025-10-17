@@ -2,6 +2,7 @@
 # Author: Zacharie Verdieu (zverdieu@bu.edu), 9/25/2025
 # Description: views for mini_insta application
 from django.shortcuts import render
+from django.db.models import Q
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import *
@@ -125,4 +126,82 @@ class UpdatePostView(UpdateView):
     template_name = 'mini_insta/update_post_form.html'
     context_object_name = 'post'
 
+class ShowFollowersDetialView(DetailView):
+    '''View to show followers for a profile, provide profile context variable'''
+
+    model = Profile
+    template_name = "mini_insta/show_followers.html"
+    context_object_name = "profile"
+
+class ShowFollowingDetialView(DetailView):
+    '''View to show profiles followed by a profile, provide profile context variable'''
+
+    model = Profile
+    template_name = "mini_insta/show_following.html"
+    context_object_name = "profile"
+
+class PostFeedListView(ListView):
+    '''Displays all posts in the feed of a Profile object'''
+
+    model = Post
+    template_name = "mini_insta/show_feed.html"
+    context_object_name = "post"
+
+    def get_context_data(self):
+        '''Return a dictionary containing context variables for use in this template'''
+
+        # superclass method
+        context = super().get_context_data()
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        context['profile'] = profile
+        return context
     
+class SearchView(ListView):
+    '''View to search for user Profiles and Posts'''
+
+    model = Profile
+    template_name = "mini_insta/search_results.html"
+    context_object_name = "profile"
+
+    def dispatch(self, request, *args, **kwargs):
+        '''override super method to handle any request'''
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+
+        if 'query' not in request.GET:
+            return render(request, 'mini_insta/search.html', {'profile': profile})
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        '''returns QuerySet of instance data for this search'''
+
+        query = self.request.GET.get('query', '')
+        return Post.objects.filter(caption__contains=query)
+
+    def get_context_data(self):
+        '''Return a dictionary containing context variables for use in this template'''
+
+        # superclass method
+        context = super().get_context_data()
+
+
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(pk=pk)
+        query = self.request.GET.get('query', '')
+
+        context['profile'] = profile
+        if query:
+            context['query'] = query
+        context['posts'] = self.get_queryset()
+        context['profiles'] = Profile.objects.filter(
+            Q(username__icontains=query) |
+            Q(display_name__icontains=query) |
+            Q(bio_text__icontains=query)
+        )
+
+        return context
