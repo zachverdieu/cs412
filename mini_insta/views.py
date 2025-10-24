@@ -4,13 +4,15 @@
 from django.shortcuts import render
 from django.db.models import Q
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
+from django.contrib.auth.mixins import LoginRequiredMixin ##for authorization
+
 
 # Create your views here.
 class ProfileListView(ListView):
-    '''Define a class to show all blog articles'''
+    '''Define a class to show all profiles'''
 
     model = Profile
     template_name = "mini_insta/show_all_profiles.html"
@@ -23,13 +25,37 @@ class ProfileDetailView(DetailView):
     template_name = "mini_insta/show_profile.html"
     context_object_name = "profile"
 
-class UpdateProfileView(UpdateView):
+    def get_object(self):
+        '''method to find Profile object for this model instance'''
+
+        # if no pk in kwargs, return logged-in user instead
+        if 'pk' in self.kwargs:
+            pk = self.kwargs['pk']
+            profile = Profile.objects.get(pk=pk)
+        else:
+            user = self.request.user
+            profile = Profile.objects.get(user=user)
+        return profile
+
+class UpdateProfileView(LoginRequiredMixin, UpdateView):
     '''View to handle update of a profile based on its PK'''
 
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'mini_insta/update_profile_form.html'
     conext_object_name = "profile"
+
+    def get_object(self):
+        '''method to find Profile object for this model instance'''
+
+        user = self.request.user
+        profile = Profile.objects.get(user=user)
+        return profile
+
+    def get_login_url(self):
+        '''return URL for login page when trying to update profile but not logged in'''
+
+        return reverse('blog:login')
 
 class PostDetailView(DetailView):
     '''Display a single post'''
@@ -38,7 +64,7 @@ class PostDetailView(DetailView):
     template_name = "mini_insta/post.html"
     context_object_name = "post"
 
-class CreatePostView(CreateView):
+class CreatePostView(LoginRequiredMixin, CreateView):
     '''Create a new post'''
 
     form_class = CreatePostForm
@@ -56,19 +82,24 @@ class CreatePostView(CreateView):
         # superclass method
         context = super().get_context_data()
 
-        pk = self.kwargs['pk']
-        profile = Profile.objects.get(pk=pk)
+        # use get_object instead of using pk
+        profile = self.get_object()
 
         context['profile'] = profile
         return context
+
+    def get_login_url(self):
+        '''return URL for login page when trying to create a post but not logged in'''
+
+        return reverse('blog:login')
 
     def form_valid(self, form):
         '''looks up profile object by pk and attaches it to the profile
         attribute of the post'''
 
-        pk = self.kwargs['pk']
-        profile = Profile.objects.get(pk=pk)
+        profile = self.get_object()
 
+        # use get_object instead of using pk
         form.instance.profile = profile
         post = form.save()
 
@@ -87,7 +118,14 @@ class CreatePostView(CreateView):
 
         return super().form_valid(form)
 
-class DeletePostView(DeleteView):
+    def get_object(self):
+        '''method to find Profile object for this model instance'''
+
+        user = self.request.user
+        profile = Profile.objects.get(user=user)
+        return profile
+
+class DeletePostView(LoginRequiredMixin, DeleteView):
     '''View class to delete a post on a profile'''
 
     model = Post
@@ -118,13 +156,23 @@ class DeletePostView(DeleteView):
 
         return reverse('mini_insta:show_profile', kwargs = {'pk': post.profile.pk})
 
-class UpdatePostView(UpdateView):
+    def get_login_url(self):
+        '''return URL for login page when trying to delete a post but not logged in'''
+
+        return reverse('blog:login')
+
+class UpdatePostView(LoginRequiredMixin, UpdateView):
     '''View to handle update of a post based on its PK'''
 
     model = Post
     form_class = UpdatePostForm
     template_name = 'mini_insta/update_post_form.html'
     context_object_name = 'post'
+
+    def get_login_url(self):
+        '''return URL for login page when trying to update a post but not logged in'''
+
+        return reverse('blog:login')
 
 class ShowFollowersDetialView(DetailView):
     '''View to show followers for a profile, provide profile context variable'''
@@ -140,7 +188,7 @@ class ShowFollowingDetialView(DetailView):
     template_name = "mini_insta/show_following.html"
     context_object_name = "profile"
 
-class PostFeedListView(ListView):
+class PostFeedListView(LoginRequiredMixin, ListView):
     '''Displays all posts in the feed of a Profile object'''
 
     model = Post
@@ -153,13 +201,25 @@ class PostFeedListView(ListView):
         # superclass method
         context = super().get_context_data()
 
-        pk = self.kwargs['pk']
-        profile = Profile.objects.get(pk=pk)
+        # use get_object instead of using pk
+        profile = self.get_object()
 
         context['profile'] = profile
         return context
+
+    def get_object(self):
+        '''method to find Profile object for this model instance'''
+
+        user = self.request.user
+        profile = Profile.objects.get(user=user)
+        return profile
+
+    def get_login_url(self):
+        '''return URL for login page when trying to view feed but not logged in'''
+
+        return reverse('blog:login')
     
-class SearchView(ListView):
+class SearchView(LoginRequiredMixin, ListView):
     '''View to search for user Profiles and Posts'''
 
     model = Profile
@@ -169,8 +229,8 @@ class SearchView(ListView):
     def dispatch(self, request, *args, **kwargs):
         '''override super method to handle any request'''
 
-        pk = self.kwargs['pk']
-        profile = Profile.objects.get(pk=pk)
+        # use get_object instead of pk
+        profile = self.get_object()
 
         if 'query' not in request.GET:
             return render(request, 'mini_insta/search.html', {'profile': profile})
@@ -190,8 +250,8 @@ class SearchView(ListView):
         context = super().get_context_data()
 
 
-        pk = self.kwargs['pk']
-        profile = Profile.objects.get(pk=pk)
+        # use get_object instead of pk
+        profile = self.get_object()
         query = self.request.GET.get('query', '')
 
         context['profile'] = profile
@@ -205,3 +265,30 @@ class SearchView(ListView):
         )
 
         return context
+
+    def get_object(self):
+        '''method to find Profile object for this model instance'''
+
+        user = self.request.user
+        profile = Profile.objects.get(user=user)
+        return profile
+
+    def get_login_url(self):
+        '''return URL for login page when trying to search but not logged in'''
+
+        return reverse('blog:login')
+
+class LogoutConfirmationView(TemplateView):
+    '''view to display logout confirmation page'''
+
+    template_name = "mini_insta/logged_out.html"
+
+# class LoginRequired(LoginRequiredMixin):
+#     '''subclass of LoginrequiredMixin with method to 
+#     find and return the profile logged in user'''
+
+#     def get_user(self):
+#         '''method to find and return user'''
+#         return self.request.user
+
+    

@@ -9,7 +9,7 @@
     <h1>Update {{profile.username}}'s Profile</h1>
 </header>
 <div class="update-form">
-    <form action="{% url 'mini_insta:update_profile' profile.pk %}" method="POST" 
+    <form action="{% url 'mini_insta:update_profile' %}" method="POST" 
     enctype="multipart/form-data">
         {% csrf_token %}
         <table>

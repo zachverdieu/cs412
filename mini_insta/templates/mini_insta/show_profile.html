@@ -9,13 +9,14 @@
 <header>
     <a href="{% url 'mini_insta:show_all' %}"><h1>Mini Insta</h1></a>
 </header>
+{% if request.user.is_authenticated and request.user == profile.user %}
 <nav>
     <ul>
-        <li><a href="{% url 'mini_insta:show_feed' profile.pk %}">Home</a></li>
-        <li><a href="{% url 'mini_insta:search' profile.pk %}">Search</a></li>
+        <li><a href="{% url 'mini_insta:show_feed' %}">Home</a></li>
+        <li><a href="{% url 'mini_insta:search' %}">Search</a></li>
     </ul>
 </nav>
-
+{% endif %}
 <div class="single_ig_profile">
     <div class="profile-header">
         <img class="profile-pic" src="{{ profile.profile_image_url }}" alt="{{ profile.username }}">
@@ -33,8 +34,10 @@
         <h3>Posts: {{ profile.get_all_posts.count }}</h3>
     </div>
 </div>
-<a href="{% url 'mini_insta:update_profile' profile.pk %}" class="button">Update Profile</a>
-<a href="{% url 'mini_insta:create_post' profile.pk %}" class = "button">Create a post!</a>
+{% if request.user.is_authenticated and request.user == profile.user %}
+<a href="{% url 'mini_insta:update_profile' %}" class="button">Update Profile</a>
+<a href="{% url 'mini_insta:create_post' %}" class = "button">Create a post!</a>
+{% endif %}
 <div class="posts">
     <!-- displaying all posts for this profile-->
     {% for post in profile.get_all_posts %}

@@ -1,0 +1,21 @@
+<!-- blog/login.html
+    display HTML form to update an existing article object-->
+{% extends 'blog/base.html' %}
+
+{% block content %}
+
+<h1>Login to out blog</h1>
+<form action="{% url 'blog:login' %}" method="POST">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" value="Login">
+    {% if request.GET.next %}
+    <input type="hidden" name="next" value="{{request.GET.next}}">
+    {% else %}
+    <input type="hidden" name="next" value="{% url 'blog:show_all' %}">
+    {% endif %}
+</form>
+<hr>
+Don't have an account?
+<a href="{% url 'blog:register' %}">Register Here</a>
+{% endblock %}

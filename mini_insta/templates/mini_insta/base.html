@@ -8,14 +8,25 @@
         <link rel="stylesheet" href="{% static 'styles-mini_insta.css' %}">
     </head>
     <body>
+        {% if request.user.is_authenticated %}
+        Logged in as: {{request.user}} <br>
+        <a href="{% url 'mini_insta:show_profile' %}" class="button">Go to your profile</a>
+        <form action="{% url 'mini_insta:logout' %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Logout" class="button">
+        </form>
+        {% else %}
+        Not logged in. <br>
+        <a href="{% url 'mini_insta:login' %}" class="button">Login</a>
+        {% endif %}
         
          {% block content %}
          {% endblock %}
          <footer>
             {% if profile %}
-            <a href="{% url 'mini_insta:show_feed' profile.pk %}">Mini Insta App</a>
-            <a href="{% url 'mini_insta:create_post' profile.pk %}" >Create Post</a>
-            <a href="{% url 'mini_insta:search' profile.pk %}">Search</a><br>
+            <a href="{% url 'mini_insta:show_feed' %}">Mini Insta App</a>
+            <a href="{% url 'mini_insta:create_post' %}" >Create Post</a>
+            <a href="{% url 'mini_insta:search' %}">Search</a><br>
             {% else %}
             <a href="{% url 'mini_insta:show_all' %}">Mini Insta App</a><br>
             {% endif %}

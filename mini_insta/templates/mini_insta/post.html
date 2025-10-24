@@ -11,13 +11,14 @@
 </header>
 <nav>
     <ul>
-        <li><a href="{% url 'mini_insta:show_feed' post.profile.pk %}">Home</a></li>
-        <li><a href="{% url 'mini_insta:search' post.profile.pk %}">Search</a></li>
+        <li><a href="{% url 'mini_insta:show_feed' %}">Home</a></li>
+        <li><a href="{% url 'mini_insta:search' %}">Search</a></li>
     </ul>
 </nav>
-
+{% if request.user.is_authenticated and request.user == post.profile.user %}
 <a href="{% url 'mini_insta:delete_post' post.pk %}" class="button">Delete</a>
 <a href="{% url 'mini_insta:update_post' post.pk %}" class="button">Update</a>
+{% endif %}
 <a href="{% url 'mini_insta:show_profile' post.profile.pk %}" class="button">Back to {{post.profile.username}}'s page</a>
 <div class="singlePost">
     <!-- if this post has a first image, display that, if not, 

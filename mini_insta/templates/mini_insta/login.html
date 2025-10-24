@@ -1,0 +1,26 @@
+<!-- File: templates/mini_insta/login.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/24/2025
+ Description: Html template displaying login page
+ -->
+{% load static %}
+<head>
+    <title>Mini_Insta</title>
+    <link rel="stylesheet" href="{% static 'styles-mini_insta.css' %}">
+</head>
+<body>
+    <h1>Login to Mini Insta</h1>
+    <div class="update-form">
+        <form action="{% url 'mini_insta:login' %}" method="POST">
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" value="Login" class="button">
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{request.GET.next}}">
+            {% else %}
+            <input type="hidden" name="next" value="{% url 'mini_insta:show_all' %}">
+            {% endif %}
+        </form>
+    </div>
+</body>
+
+

@@ -10,7 +10,7 @@
 </header>
 <div class="create-post-form">
 
-    <form action="{% url 'mini_insta:create_post' profile.pk %}" method="POST" 
+    <form action="{% url 'mini_insta:create_post' %}" method="POST" 
     enctype="multipart/form-data">
         {% csrf_token %}
         <table>
