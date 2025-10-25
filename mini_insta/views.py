@@ -1,13 +1,17 @@
 # File: mini_insta/urls.py
 # Author: Zacharie Verdieu (zverdieu@bu.edu), 9/25/2025
 # Description: views for mini_insta application
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import *
-from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
+from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm, CreateProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin ##for authorization
+from django.contrib.auth.forms import UserCreationForm ## for new User
+from django.contrib.auth.models import User ## django user model
+from django.contrib.auth import login
+
 
 
 # Create your views here.
@@ -37,6 +41,14 @@ class ProfileDetailView(DetailView):
             profile = Profile.objects.get(user=user)
         return profile
 
+    def get_context_data(self, **kwargs):
+        ''' allows me to use current_profile within template'''
+        
+        context = super().get_context_data(**kwargs)
+        # current_profile is the Profile of the logged-in user
+        context['current_profile'] = Profile.objects.get(user=self.request.user)
+        return context
+
 class UpdateProfileView(LoginRequiredMixin, UpdateView):
     '''View to handle update of a profile based on its PK'''
 
@@ -57,12 +69,57 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
 
         return reverse('blog:login')
 
+class CreateProfileView(CreateView):
+    '''view for creating a new profile'''
+
+    model = Profile
+    template_name = "mini_insta/create_profile_form.html"
+    context_object_name = "profile"
+    form_class = CreateProfileForm
+
+    def get_context_data(self, **kwargs):
+        '''Return a dictionary containing context variables for use in this template'''
+
+        # superclass method
+        context = super().get_context_data()
+
+        context['user_form'] = UserCreationForm()
+        return context
+
+    def form_valid(self, form):
+        '''creates a new user object in addition to the profile created upon form submission'''
+
+        # reconstruct UserCreationForm instance
+        user_form = UserCreationForm(self.request.POST)
+        # save the UserCreationForm to get the new user
+        user = user_form.save()
+        # Log the User in
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        # attach django User to Profile instance object
+        form.instance.user = user
+
+        return super().form_valid(form)
+       
+
 class PostDetailView(DetailView):
     '''Display a single post'''
 
     model = Post
     template_name = "mini_insta/post.html"
     context_object_name = "post"
+
+    def get_context_data(self, **kwargs):
+        '''supplies context variables for this view'''
+
+        context = super().get_context_data(**kwargs)
+
+        current_profile = Profile.objects.get(user=self.request.user)
+        post = Post.objects.get(pk = self.kwargs['pk'])
+        # checks if there exists a like object for this post where profile = current profile
+        has_liked = post.get_likes().filter(profile=current_profile).exists()
+        context['has_liked'] = has_liked
+        return context
+        
 
 class CreatePostView(LoginRequiredMixin, CreateView):
     '''Create a new post'''
@@ -97,9 +154,9 @@ class CreatePostView(LoginRequiredMixin, CreateView):
         '''looks up profile object by pk and attaches it to the profile
         attribute of the post'''
 
+        # use get_object instead of using pk
         profile = self.get_object()
 
-        # use get_object instead of using pk
         form.instance.profile = profile
         post = form.save()
 
@@ -283,12 +340,60 @@ class LogoutConfirmationView(TemplateView):
 
     template_name = "mini_insta/logged_out.html"
 
-# class LoginRequired(LoginRequiredMixin):
-#     '''subclass of LoginrequiredMixin with method to 
-#     find and return the profile logged in user'''
+class FollowProfileView(LoginRequiredMixin, TemplateView):
+    '''view for following a profile'''
 
-#     def get_user(self):
-#         '''method to find and return user'''
-#         return self.request.user
+    def dispatch(self, request, *args, **kwargs):
+        '''handles request for following a profile'''
 
-    
+        target_profile = Profile.objects.get(pk=kwargs['pk'])
+        current_profile = Profile.objects.get(user=self.request.user)
+
+        if current_profile != target_profile:
+            follow = Follow(follower_profile=current_profile, profile=target_profile)
+            follow.save()
+        url = reverse('mini_insta:show_profile', kwargs={'pk': target_profile.pk})
+        return redirect(url)
+
+class UnFollowProfileView(LoginRequiredMixin, TemplateView):
+    ''' view for unfollowing a profile'''
+
+    def dispatch(self, request, *args, **kwargs):
+        '''deletes actual instance of the follow'''
+
+        target_profile = Profile.objects.get(pk=kwargs['pk'])
+        current_profile = Profile.objects.get(user=self.request.user)
+
+        follow = Follow.objects.filter(follower_profile=current_profile, profile=target_profile)
+        follow.delete()
+        url = reverse('mini_insta:show_profile', kwargs={'pk': target_profile.pk})
+        return redirect(url)
+
+class LikePostView(LoginRequiredMixin, TemplateView):
+    '''view for liking a post'''
+
+    def dispatch(self, request, *args, **kwargs):
+        '''handles request for liking a post'''
+
+        post = Post.objects.get(pk=kwargs['pk'])
+        current_profile = Profile.objects.get(user=self.request.user)
+
+        if post.profile != current_profile:
+            this_like = Like(profile=current_profile, post=post)
+            this_like.save()
+        url = reverse('mini_insta:post', kwargs={'pk': post.pk})
+        return redirect(url)
+
+class UnLikePostView(LoginRequiredMixin, TemplateView):
+    '''view for unliking a post'''
+
+    def dispatch(self, request, *args, **kwargs):
+        '''deletes actual instance of this like'''
+
+        post = Post.objects.get(pk=kwargs['pk'])
+        current_profile = Profile.objects.get(user=self.request.user)
+
+        this_like = Like.objects.filter(profile=current_profile, post=post)
+        this_like.delete()
+        url = reverse('mini_insta:post', kwargs={'pk': post.pk})
+        return redirect(url)

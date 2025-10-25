@@ -27,12 +27,28 @@
         <img src="{{photo.get_image_url}}" alt="Photo for '{{post.caption}}' by {{post.profile}}">
     {% endfor %}
     {% if post.get_likes %}
-    <h5>Liked by <strong>{{post.get_likes.first.profile.username}}</strong> and {{post.get_likes.count|add:"-1"}} others</h5>
+        {% if post.get_likes > 1%}
+        <h5>Liked by <strong>{{post.get_likes.first.profile.username}}</strong> and {{post.get_likes.count|add:"-1"}} others</h5>
+        {% else %}
+        <h5>Liked by <strong>{{post.get_likes.first.profile.username}}</strong></h5>
+        {% endif %}
     {% endif %}
     <h3>{{post.caption}}</h3>
     <p>posted at {{post.timestamp}}</p>
+    {% if request.user.is_authenticated and post.profile.user != request.user %}
+        {% if has_liked %}
+            <form action="{% url 'mini_insta:delete_like' post.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Unlike" class="button">
+            </form>
+        {% else %}
+            <form action="{% url 'mini_insta:like' post.pk %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Like" class="button">
+            </form>
+        {% endif %}
+    {% endif %}
     <h1>Comments:</h1>
-
     {% for comment in post.get_all_comments %}
         <p>{{comment.profile.display_name}}</p>
         <h3>{{comment.text}}</h3><br>

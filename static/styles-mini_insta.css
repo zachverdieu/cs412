@@ -397,6 +397,36 @@ nav li {
     transition: border-color 0.2s ease;
 }
 
+.create-form .form-row {
+    display: flex;
+    align-items: center;       /* Vertically center label and input */
+    margin-bottom: 16px;       /* Space between fields */
+    gap: 10px;                 /* Space between label and input */
+}
+
+.create-form .form-row label {
+    width: 120px;              /* Fixed width for labels */
+    text-align: right;          /* Align label text to the right */
+    font-weight: 600;           /* Match your form styling */
+}
+
+.create-form .form-row input,
+.create-form .form-row select,
+.create-form .form-row textarea {
+    flex: none;     
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.create-form .form-row .error {
+    color: red;
+    font-size: 0.85rem;
+    margin-left: 5px;
+}
+
 /* Responsive tweaks */
 @media (max-width: 600px) {
     .single_ig_profile .profile-header {

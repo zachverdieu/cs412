@@ -1,0 +1,43 @@
+<!-- File: templates/mini_insta/create_profile_form.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 10/24/2025
+ Description: Html template for page with form to create new profile
+ -->
+ {% extends 'mini_insta/base.html' %}
+
+ {% block content %}
+<header>
+    <h1>Create a new Profile</h1>
+</header>
+<div class="create-form">
+    <form action="{% url 'mini_insta:create_profile' %}" method="POST" 
+    enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in user_form %}
+        <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <span class="error">{{ field.errors }}</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% for field in form %}
+        <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <span class="error">{{ field.errors }}</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <input type="submit" name="create_profile" value="Create Profile" class="button"><br>
+    </form>
+    <form action="{% url 'mini_insta:show_all' %}" method="Get">
+        {% csrf_token %}
+        <input type="submit" value="Cancel" class="button">
+    </form>
+</div>
+
+
+{% endblock %}
