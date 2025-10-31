@@ -1,0 +1,84 @@
+<!-- voter_analytics/templates/voter_analytics/voter.html -->
+<!-- Author: Zacharie Verdieu (zverdieu@bu.edu), 10/31/2025
+Description: HTML template for displaying information about a single voter.
+ -->
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+
+<div>
+    <h3>{{ voter.first_name }} {{ voter.last_name }}</h3>
+
+    <table>
+        <tr>
+            <th>Street Address</th>
+            <td>
+                {{ voter.street_number }} {{ voter.street_name }}
+                {% if voter.apartment_number %}
+                    Apt {{ voter.apartment_number }}
+                {% endif %}
+                {{ voter.zip_code }}
+            </td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>{{ voter.date_of_birth }}</td>
+        </tr>
+
+        <tr>
+            <th>Date of Registration</th>
+            <td>{{ voter.date_of_registration }}</td>
+        </tr>
+
+        <tr>
+            <th>Party Affiliation</th>
+            <td>{{ voter.party_affiliation }}</td>
+        </tr>
+
+        <tr>
+            <th>Precinct</th>
+            <td>{{ voter.precinct_number }}</td>
+        </tr>
+
+        <tr>
+            <th>Voter Score</th>
+            <td>{{ voter.voter_score }}</td>
+        </tr>
+
+        <tr>
+            <th>Voted in 2020 State</th>
+            <td>{{ voter.v20state }}</td>
+        </tr>
+
+        <tr>
+            <th>Voted in 2021 Town</th>
+            <td>{{ voter.v21town }}</td>
+        </tr>
+
+        <tr>
+            <th>Voted in 2021 Primary</th>
+            <td>{{ voter.v21primary }}</td>
+        </tr>
+
+        <tr>
+            <th>Voted in 2022 General</th>
+            <td>{{ voter.v22general }}</td>
+        </tr>
+
+        <tr>
+            <th>Voted in 2023 Town</th>
+            <td>{{ voter.v23town }}</td>
+        </tr>
+    </table>
+
+    <p>
+        <a href="{{ maps }}" target="_blank">Google Maps Link of Address</a>
+    </p>
+
+    <p>
+        <a href="{% url 'voters_list' %}">Back to Voters</a>
+    </p>
+</div>
+
+
+{% endblock %}

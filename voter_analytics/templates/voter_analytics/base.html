@@ -1,0 +1,31 @@
+<!-- templates/voter_analytics/base.html-->
+<!-- zverdieu@bu.edu 10/31/2025-->
+<!-- Description: Base template for voter_analytics page-->
+ 
+{% load static %}
+<html>
+    <head>
+        <title>Voter Analytics</title>
+        <link rel="stylesheet" href="{% static 'voter_analytics.css' %}">
+    </head>
+    <body>
+        <header>
+            <h1>Voter Analytics</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'voters' %}">Home</a></li>
+                </ul>
+                <ul>
+                    <li><a href="{% url 'voters_list' %}">List of Voters</a></li>
+                </ul>
+                <ul>
+                    <li><a href="{% url 'graphs' %}">Graphs</a></li>
+                </ul>
+            </nav>
+        </header>
+    
+    {% block content %}
+    {% endblock %}    
+  
+    </body>
+</html>

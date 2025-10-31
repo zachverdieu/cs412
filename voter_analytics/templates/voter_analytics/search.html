@@ -1,0 +1,87 @@
+<!-- templates/voter_analytics/search.html-->
+<!-- zverdieu@bu.edu 10/31/2025-->
+<!-- Description: renders voter search feature on show all voters page -->
+ 
+<h1>Search Form</h1>
+ 
+ 
+<table>
+<form action="{% url action %}">
+ 
+    <!-- Search by a Voter's party affiliation -->
+    <tr>
+        <th>Party Affiliation</th>
+        <td>
+            <select name="party_affiliation">
+                <option value="">Choose</option>
+                <option value="D " {% if party_affiliation == 'D ' %}selected{% endif %}>D</option>
+                <option value="R " {% if party_affiliation == 'R ' %}selected{% endif %}>R</option>
+                <option value="U " {% if party_affiliation == 'U ' %}selected{% endif %}>U</option>
+                <option value="O " {% if party_affiliation == 'O ' %}selected{% endif %}>O</option>
+            </select>
+        </td>
+    </tr>
+
+    <!-- Search by minimum birth yr -->
+    <tr>
+        <th>Born After</th>
+        <td>
+            <select name="min_birth_year">
+                <option value="">Choose</option>
+                {% for year in all_years %}
+                    <option value="{{ year }}" {% if min_birth_year == year|stringformat:"s" %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+    <!-- Search by max birth yr -->
+    <tr>
+        <th>Born Before</th>
+        <td>
+            <select name="max_birth_year">
+                <option value="">Choose</option>
+                {% for year in all_years %}
+                    <option value="{{ year }}" {% if max_birth_year == year|stringformat:"s" %}selected{% endif %}>
+                        {{ year }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+    <!-- Search by score-->
+    <tr>
+        <th>Voter Score</th>
+        <td>
+            <select name="voter_score">
+                <option value="">Choose</option>
+                {% for score in scores %}
+                    <option value="{{ score }}" {% if voter_score == score|stringformat:"s" %}selected{% endif %}>
+                        {{ score }}
+                    </option>
+                {% endfor %}
+            </select>
+        </td>
+    </tr>
+
+    <!-- voted in what election -->
+    <tr>
+        <th>Voted In</th>
+        <td>
+            <label><input type="checkbox" name="v20state" {% if v20state %}checked{% endif %}> 2020 State Election</label><br>
+            <label><input type="checkbox" name="v21town" {% if v21town %}checked{% endif %}> 2021 Town Election</label><br>
+            <label><input type="checkbox" name="v21primary" {% if v21primary %}checked{% endif %}> 2021 Primary Election</label><br>
+            <label><input type="checkbox" name="v22general" {% if v22general %}checked{% endif %}> 2022 General Election</label><br>
+            <label><input type="checkbox" name="v23town" {% if v23town %}checked{% endif %}> 2023 Town Election</label><br>
+        </td>
+    </tr>
+
+    <tr>
+        <td><input type="submit" value="Filter Voters"></td>
+    </tr>
+    
+</form>
+</table>

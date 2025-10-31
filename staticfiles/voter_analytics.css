@@ -1,0 +1,124 @@
+/*
+File: static/voter_analytics.css
+Author: Zacharie Verdieu, zverdieu@bu.edu, 10/31/25
+Description: styling for the voter_analytics application
+*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+header {
+    background-color: #004080;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 5px 0 0 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+nav ul li a:hover {
+    background-color: #0066cc;
+}
+
+/* Content container */
+div {
+    margin: 20px auto;
+    max-width: 1000px;
+    padding: 10px 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #004080;
+    color: white;
+}
+
+
+
+table tr:hover {
+    background-color: #e6f0ff;
+}
+
+select, input[type="submit"], input[type="reset"], input[type="text"], input[type="number"] {
+    padding: 5px 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+input[type="submit"], input[type="reset"] {
+    background-color: #004080;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+input[type="submit"]:hover, input[type="reset"]:hover {
+    background-color: #0066cc;
+}
+
+ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+ul li a {
+    text-decoration: none;
+    padding: 5px 10px;
+    background-color: #004080;
+    color: white;
+    border-radius: 5px;
+    transition: background 0.2s;
+}
+
+ul li a:hover {
+    background-color: #0066cc;
+}
+
+div > div > div {
+    margin: 20px 0;
+}

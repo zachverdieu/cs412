@@ -1,0 +1,36 @@
+<!-- templates/voter_analytics/graphs.html -->
+<!--
+Author: Zacharie Verdieu (zverdieu@bu.edu), 10/31/2025
+Description: HTML template for displaying graphs based on voter data.
+ -->
+{% extends 'voter_analytics/base.html' %}
+
+{% block content %}
+
+<div>
+    <h1>Voter Data Graphs</h1>
+
+    <div>
+        {% include "voter_analytics/search.html" %}
+    </div>
+
+    <div>
+        <div>
+            {{graph_birth|safe}}
+        </div>
+    </div>
+
+    <div>
+        <div>
+            {{graph_party|safe}}
+        </div>
+    </div>
+
+    <div>
+        <div>
+            {{graph_elections|safe}}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
