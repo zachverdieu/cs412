@@ -19,6 +19,6 @@ urlpatterns = [
     path('api/joke/<int:pk>', JokeDetailAPIView.as_view(), name='random_joke_api'),
     path('api/pictures', PictureListAPIView.as_view(), name='random_joke_api'),
     path('api/picture/<int:pk>', PictureDetailAPIView.as_view(), name='random_joke_api'),
-    path('api/randompicture', RandomPictureAPIView.as_view(), name='random_picture_api'),
+    path('api/random_picture', RandomPictureAPIView.as_view(), name='random_picture_api'),
 
 ]
