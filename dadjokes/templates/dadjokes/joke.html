@@ -1,0 +1,16 @@
+<!-- File: templates/dadjokes/joke.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 11/13/2025
+ Description: Html template for displaying individual joke based on primary key
+ -->
+
+{% extends 'dadjokes/base.html' %}
+
+ {% block content %}
+<h1>{{joke}}</h1>
+
+<div>
+    <h3>{{joke.text}}</h3>
+    <p>{{joke.timestamp}}</p>
+</div>
+
+{% endblock %}

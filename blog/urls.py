@@ -18,4 +18,7 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name="login"),
     path('logout/', auth_views.LogoutView.as_view(next_page='blog:show_all'), name="logout"),
     path('register/', UserRegistrationView.as_view(), name="register"),
+
+    # API VIEWS:
+    path('api/articles/', ArticleListAPIView.as_view(), name='article_list_api' )
 ]

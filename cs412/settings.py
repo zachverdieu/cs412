@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "mini_insta", # Assignment 3
     "marathon_analytics", # Module 8 example
     "voter_analytics", # Assiignment 8
+    "rest_framework",
+    "dadjokes", # Assignment 10
 ]
 
 MIDDLEWARE = [

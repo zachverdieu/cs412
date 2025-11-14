@@ -1,0 +1,15 @@
+<!-- dadjokes/article.html-->
+<!-- Zacharie Verdieu-->
+<!-- display a single dad joke on this web page -->
+{% extends 'dadjokes/base.html' %}
+
+ {% block content %}
+<h1>{{joke}}</h1>
+
+<div>
+    <img src="{{ picture.image_url }}" alt="{{picture}}">
+    <h3>{{joke.text}}</h3>
+    <p>{{joke.timestamp}}</p>
+</div>
+
+{% endblock %}

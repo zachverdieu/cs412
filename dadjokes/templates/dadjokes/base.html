@@ -1,0 +1,27 @@
+<!-- dadjokes/templates/dadjokes/base.html-->
+<!-- zverdieu@bu.edu 11/12/2025-->
+<!-- Description: Base template for dadjokes page-->
+
+{% load static %}
+<html>
+    <head>
+        <title>Dad Jokes</title>
+        <!-- <link rel="stylesheet" href="{% static 'styles-blog.css' %}"> -->
+    </head>
+    <body>
+        <head>
+            <h1>Dad Jokes</h1>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'random' %}">Random</a></li>
+                    <li><a href="{% url 'jokes' %}">Show All Jokes</a></li>
+                    <li><a href="{% url 'pictures' %}">Show All Pictures</a></li>
+                </ul>
+            </nav>
+        </head>
+        
+         {% block content %}
+         {% endblock %}
+        
+    </body>
+</html>

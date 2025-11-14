@@ -1,0 +1,21 @@
+<!-- File: templates/dadjokes/pictures.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 11/13/2025
+ Description: Html template for displaying all created picture objects
+ -->
+
+{% extends 'dadjokes/base.html' %}
+
+{% block content %}
+<h1>All Pictures</h1>
+
+<div class="pictures">
+    {% for picture in pictures %}
+        <h3>{{picture}}</h3>
+
+        <div>
+            <img src="{{ picture.image_url }}" alt="{{picture}}">
+            <p>{{picture.timestamp}}</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
