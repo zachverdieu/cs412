@@ -13,7 +13,6 @@ class Profile(models.Model):
     # define data attributes of Profile object
     username = models.TextField(blank=True)
     profile_picture = models.ImageField(blank=True)
-    address = models.TextField(blank=True)
     email = models.EmailField(blank=True)
     join_date = models.DateTimeField(auto_now=True)
     num_posts = models.IntegerField(default=0)
@@ -24,10 +23,11 @@ class Profile(models.Model):
 
         return f'{self.username}'
 
-class ClothingItem(models.Model):
-    '''Encapsulate data of a clothing item'''
+class ClothingPost(models.Model):
+    """A clothing item listed as a post."""
 
-    # define data attributes of ClothingItem object
+    # User who created the post
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     name = models.TextField(blank=True)
     description = models.TextField(blank=True)
     picture = models.ImageField(blank=True)
@@ -35,24 +35,11 @@ class ClothingItem(models.Model):
     size = models.TextField(blank=True)
     condition = models.TextField(blank=True)
 
-    def __str__(self):
-        '''return a string representation of this model instance'''
-
-        return f'{self.name} - {self.size} - {self.color} - ${self.price}'
-
-class Post(models.Model):
-    '''Encapsulate data of a thriftiezzz post'''
-
-    # define data attributes of Post object
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    clothing_item = models.ForeignKey(ClothingItem, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     post_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        '''return a string representation of this model instance'''
-
-        return f'Post by {self.profile.username} - Item: {self.clothing_item.name} - ${self.price}'
+        return f"{self.name} - {self.size} - {self.color} - ${self.price} (posted by {self.profile.username})"
 
 class Purchase(models.Model):
     '''Encapsulate data of a thriftiezzz purchase'''
@@ -60,32 +47,32 @@ class Purchase(models.Model):
     # define data attributes of Purchase object
     buyer = models.ForeignKey(Profile, related_name='buyer', on_delete=models.CASCADE)
     seller = models.ForeignKey(Profile, related_name='seller', on_delete=models.CASCADE)
-    clothing_item = models.ForeignKey(ClothingItem, on_delete=models.CASCADE)
+    clothing_post = models.ForeignKey(ClothingPost, on_delete=models.CASCADE)
     purchase_date = models.DateTimeField(auto_now=True)
     amount = models.DecimalField(max_digits=6, decimal_places=2)
 
     def __str__(self):
         '''return a string representation of this model instance'''
 
-        return f'Purchase by {self.profile.username} - Item: {self.clothing_item.name} - ${self.amount}'
+        return f'Purchase by {self.buyer.username} - Item: {self.clothing_post.name} - ${self.amount}'
 
 class Cart(models.Model):
     '''Encapsulate data of a thriftiezzz shopping cart'''
 
     # define data attributes of Cart object
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    clothing_items = models.ManyToManyField(ClothingItem)
+    clothing_posts = models.ManyToManyField(ClothingPost)
 
     def __str__(self):
         '''return a string representation of this model instance'''
 
-        return f'Cart of {self.profile.username} with {self.clothing_items.count()} items'
+        return f'Cart of {self.profile.username} with {self.clothing_posts.count()} items'
 
 class Review(models.Model):
-    '''Encapsulate data of a review for a ClothingItem'''
+    '''Encapsulate data of a review for a ClothingPost'''
 
     # define data attributes of Review object
-    clothing_item = models.ForeignKey(ClothingItem, on_delete=models.CASCADE)
+    clothing_post = models.ForeignKey(ClothingPost, on_delete=models.CASCADE)
     seller = models.ForeignKey(Profile, related_name='seller_profile', on_delete=models.CASCADE)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     rating = models.IntegerField()
@@ -95,4 +82,4 @@ class Review(models.Model):
     def __str__(self):
         '''return a string representation of this model instance'''
 
-        return f'Review by {self.profile.username} for {self.clothing_item.name} - Rating: {self.rating}'
+        return f'Review by {self.profile.username} for {self.clothing_post.name} - Rating: {self.rating}'
