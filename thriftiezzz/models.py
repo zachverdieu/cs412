@@ -41,7 +41,7 @@ class ClothingPost(models.Model):
     is_sold = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.name} - {self.size} - {self.color} - ${self.price} (posted by {self.profile.username})"
+        return f"{self.name} - {self.color} - ${self.price} (posted by {self.profile.username})"
 
 class Purchase(models.Model):
     '''Encapsulate data of a thriftiezzz purchase'''
