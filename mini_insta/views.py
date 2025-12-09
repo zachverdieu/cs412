@@ -67,7 +67,7 @@ class UpdateProfileView(LoginRequiredMixin, UpdateView):
     def get_login_url(self):
         '''return URL for login page when trying to update profile but not logged in'''
 
-        return reverse('blog:login')
+        return reverse('mini_insta:login')
 
 class CreateProfileView(CreateView):
     '''view for creating a new profile'''

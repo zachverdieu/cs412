@@ -24,6 +24,32 @@ class Profile(models.Model):
 
         return f'{self.username}'
 
+    def get_all_posts(self):
+        '''Return all ClothingPosts made by this profile.'''
+
+        return ClothingPost.objects.filter(profile=self)
+
+    def get_cart(self):
+        '''Return (or create) the cart associated with this profile.'''
+
+        cart, created = Cart.objects.get_or_create(profile=self)
+        return cart
+
+    def get_num_posts(self):
+        '''Compute number of posts for this profile.'''
+
+        return ClothingPost.objects.filter(profile=self).count()
+
+    def get_num_purchases(self):
+        '''Compute number of purchases made by this profile.'''
+
+        return Purchase.objects.filter(buyer=self).count()
+
+    def get_absolute_url(self):
+        '''Return the URL to view this profile.'''
+
+        return reverse('thriftiezzz:show_profile', kwargs={'pk': self.pk})
+
 class ClothingPost(models.Model):
     """A clothing item listed as a post."""
 
@@ -42,6 +68,26 @@ class ClothingPost(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.color} - ${self.price} (posted by {self.profile.username})"
+
+    def get_all_photos(self):
+        '''Return a list of all photos for this post.'''
+
+        return [self.picture] if self.picture else []
+
+    def get_all_reviews(self):
+        '''Return all reviews made on this clothing post.'''
+
+        return Review.objects.filter(clothing_post=self)
+
+    def get_absolute_url(self):
+        '''Return the URL to view this clothing post.'''
+
+        return reverse('thriftiezzz:post', kwargs={'pk': self.pk})
+
+    def can_be_purchased(self):
+        '''Return True if this post is still available.'''
+        
+        return not self.is_sold
 
 class Purchase(models.Model):
     '''Encapsulate data of a thriftiezzz purchase'''
@@ -69,6 +115,16 @@ class Cart(models.Model):
         '''return a string representation of this model instance'''
 
         return f'Cart of {self.profile.username} with {self.clothing_posts.count()} items'
+
+    def total_items(self):
+        '''Return the number of items in the cart.'''
+
+        return self.clothing_posts.count()
+
+    def total_price(self):
+        '''Return the total price of all items in the cart.'''
+
+        return sum(post.price for post in self.clothing_posts.all())
 
 class Review(models.Model):
     '''Encapsulate data of a review for a ClothingPost'''
