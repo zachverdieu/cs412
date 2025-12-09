@@ -1,9 +1,10 @@
 # File: thriftiezzz/models.py
 # Author: Zacharie Verdieu (zverdieu@bu.edu)
-# Description: File creating models for thriftiezzz
-
+# Description: File creating models for thriftiezzz application
 
 from django.db import models
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 
@@ -37,6 +38,7 @@ class ClothingPost(models.Model):
 
     price = models.DecimalField(max_digits=6, decimal_places=2)
     post_date = models.DateTimeField(auto_now=True)
+    is_sold = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} - {self.size} - {self.color} - ${self.price} (posted by {self.profile.username})"
