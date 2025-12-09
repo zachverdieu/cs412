@@ -33,7 +33,6 @@ class ClothingPostListView(ListView):
         '''Return QuerySet of available ClothingPost objects in random order.'''
         return ClothingPost.objects.filter(is_sold=False).order_by('?')
 
-
 class ProfileListView(ListView):
     '''Display all profiles.'''
 
@@ -48,6 +47,16 @@ class ClothingPostDetailView(DetailView):
     model = ClothingPost
     template_name = "thriftiezzz/show_clothing_post.html"
     context_object_name = "post"
+
+    def get_context_data(self, **kwargs):
+        '''supplies context variables for this view'''
+
+        context = super().get_context_data(**kwargs)
+
+        current_profile = self.request.user.thrift_profile
+        post = ClothingPost.objects.get(pk = self.kwargs['pk'])
+        context['current_profile'] = current_profile
+        return context
 
 
 class ProfileDetailView(DetailView):
@@ -145,7 +154,7 @@ class DeleteClothingPostView(DeleteView):
         Adjust the reverse() call to match your actual URL names.
         '''
         post = self.object
-        return reverse('thriftiezzz:show_prfile', kwargs={'pk': post.profile.pk})
+        return reverse('thriftiezzz:show_profile', kwargs={'pk': post.profile.pk})
 
 
 class SearchView(ListView):
@@ -205,10 +214,25 @@ class CartDetailView(DetailView):
     def get_object(self):
         '''Return (or create) the Cart for the Profile whose pk is in the URL.'''
 
-        pk = self.kwargs['pk']               # Profile pk
+        pk = self.kwargs['pk']              
         profile = Profile.objects.get(pk=pk)
         cart, created = Cart.objects.get_or_create(profile=profile)
         return cart
+
+    def post(self, request, *args, **kwargs):
+        '''Handle removal of an item from the cart.'''
+        cart = self.get_object()
+        post_id = request.POST.get("post_id")
+
+        if post_id:
+            try:
+                post = ClothingPost.objects.get(pk=post_id)
+                cart.clothing_posts.remove(post)
+            except ClothingPost.DoesNotExist:
+                pass  # silently ignore bad IDs
+
+        # Redirect back to the same cart page
+        return redirect('thriftiezzz:show_cart', pk=cart.profile.pk)
 
 
 class AddToCartView(TemplateView):
@@ -277,45 +301,117 @@ class CreateReviewView(CreateView):
         return reverse('thriftiezzz:post', kwargs={'pk': post.pk})
 
 
-class PurchaseClothingPostView(TemplateView):
-    '''
-    Purchase a clothing post:
-    - create a Purchase record
-    - mark the post as sold
-    - remove it from all carts that contain it
-    '''
+class PurchaseView(TemplateView):
+    """
+    Handles:
+    - Purchasing ONE clothing post (if post_pk is provided)
+    - Purchasing ALL items in a user's cart (if only pk is provided)
+    Uses the SAME purchase.html template.
+    """
 
-    def dispatch(self, request, *args, **kwargs):
-        '''Handle the purchase of a ClothingPost.'''
+    template_name = "thriftiezzz/purchase.html"
 
-        # pk = buyer Profile pk, post_pk = ClothingPost pk
-        buyer = Profile.objects.get(pk=kwargs['pk'])
-        post = ClothingPost.objects.get(pk=kwargs['post_pk'])
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        # Prevent buying your own post
-        if buyer == post.profile:
-            return redirect('thriftiezzz:post', pk=post.pk)
+        profile = Profile.objects.get(pk=kwargs["pk"])
+        context["buyer"] = profile  # always include buyer
 
-        # Prevent buying something already sold
-        if post.is_sold:
-            return redirect('thriftiezzz:post', pk=post.pk)
+        post_pk = kwargs.get("post_pk")
 
-        # Create purchase record
-        Purchase.objects.create(
-            buyer=buyer,
-            seller=post.profile,
-            clothing_post=post,
-            amount=post.price,
-        )
+        # CASE 1: Single item purchase
+        if post_pk:
+            post = ClothingPost.objects.get(pk=post_pk)
+            context["post"] = post
+            return context
 
-        # Mark post as sold
-        post.is_sold = True
-        post.save()
+        # CASE 2: Cart purchase
+        cart, _ = Cart.objects.get_or_create(profile=profile)
+        context["cart"] = cart
+        return context
 
-        # Remove from all carts
-        Cart.objects.filter(clothing_posts=post).update()
-        for cart in Cart.objects.filter(clothing_posts=post):
-            cart.clothing_posts.remove(post)
+    def post(self, request, *args, **kwargs):
+        """Handles the actual purchase submission."""
 
-        # Redirect to buyer's profile
-        return redirect('thriftiezzz:show_profile', pk=buyer.pk)
+        buyer = Profile.objects.get(pk=kwargs["pk"])
+        post_pk = kwargs.get("post_pk")
+
+        # ============================
+        # CASE 1 — PURCHASE ONE POST
+        # ============================
+        if post_pk:
+            post = ClothingPost.objects.get(pk=post_pk)
+
+            # Prevent buying your own item
+            if post.profile == buyer:
+                return redirect("thriftiezzz:post", pk=post.pk)
+
+            # Prevent double-purchase
+            if post.is_sold:
+                return redirect("thriftiezzz:post", pk=post.pk)
+
+            # Create Purchase entry
+            Purchase.objects.create(
+                buyer=buyer,
+                seller=post.profile,
+                clothing_post=post,
+                amount=post.price
+            )
+
+            # Mark item sold
+            post.is_sold = True
+            post.save()
+
+            # Remove from all carts
+            for cart in Cart.objects.filter(clothing_posts=post):
+                cart.clothing_posts.remove(post)
+
+            # Update buyer stats
+            buyer.num_purchases += 1
+            buyer.save()
+
+            return redirect("thriftiezzz:show_profile", pk=buyer.pk)
+
+        # ============================
+        # CASE 2 — PURCHASE ENTIRE CART
+        # ============================
+        cart, _ = Cart.objects.get_or_create(profile=buyer)
+        items = list(cart.clothing_posts.all())
+
+        if not items:
+            # nothing to purchase
+            return redirect("thriftiezzz:show_cart", pk=buyer.pk)
+
+        purchased = 0
+        for item in items:
+            # Skip sold items
+            if item.is_sold:
+                continue
+
+            # Create Purchase entry
+            Purchase.objects.create(
+                buyer=buyer,
+                seller=item.profile,
+                clothing_post=item,
+                amount=item.price
+            )
+
+            # Mark sold
+            item.is_sold = True
+            item.save()
+
+            # Remove from carts globally
+            for other_cart in Cart.objects.filter(clothing_posts=item):
+                other_cart.clothing_posts.remove(item)
+
+            purchased += 1
+
+        # Update profile stats
+        buyer.num_purchases += purchased
+        buyer.save()
+
+        # Clear cart
+        cart.clothing_posts.clear()
+
+        return redirect("thriftiezzz:show_profile", pk=buyer.pk)
+

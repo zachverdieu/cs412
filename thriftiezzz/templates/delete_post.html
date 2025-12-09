@@ -1,0 +1,65 @@
+<!-- File: templates/thriftiezzz/delete_post.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 12/9/2025
+ Description: Confirmation page for deleting a ClothingPost
+-->
+
+{% extends "thriftiezzz/base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">Delete Post</h1>
+
+<div class="delete-container">
+
+    <h2>Are you sure you want to delete this post?</h2>
+
+    <!-- Show the post being deleted -->
+    <div class="post-preview">
+
+        {% if post.picture %}
+            <img src="{{ post.picture.url }}" alt="{{ post.name }}" class="delete-post-image">
+        {% else %}
+            <div class="delete-post-image placeholder">
+                No Image Available
+            </div>
+        {% endif %}
+
+        <div class="delete-post-info">
+            <h3>{{ post.name }}</h3>
+            <p class="post-price">${{ post.price }}</p>
+
+            {% if post.size or post.color or post.condition %}
+                <p class="post-meta">
+                    {% if post.size %} Size: {{ post.size }} {% endif %}
+                    {% if post.color %}
+                        {% if post.size %} | {% endif %}
+                        Color: {{ post.color }}
+                    {% endif %}
+                    {% if post.condition %}
+                        {% if post.size or post.color %} | {% endif %}
+                        Condition: {{ post.condition }}
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="delete-actions">
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                Yes, Delete This Post
+            </button>
+        </form>
+
+        <a href="{% url 'thriftiezzz:show_clothing_post' post.pk %}" class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

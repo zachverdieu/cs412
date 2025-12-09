@@ -12,6 +12,7 @@ class Profile(models.Model):
     '''Encapsulate data of a thriftiezzz user profile'''
 
     # define data attributes of Profile object
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='thrift_profile', null=True, blank=True)
     username = models.TextField(blank=True)
     profile_picture = models.ImageField(blank=True)
     email = models.EmailField(blank=True)
@@ -86,7 +87,7 @@ class ClothingPost(models.Model):
 
     def can_be_purchased(self):
         '''Return True if this post is still available.'''
-        
+
         return not self.is_sold
 
 class Purchase(models.Model):

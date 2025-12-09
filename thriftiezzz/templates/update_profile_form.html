@@ -1,0 +1,23 @@
+<!-- File: templates/thriftiezzz/update_profile_form.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 12/8/2025
+ Description: Html template for update_profile_form page for thriftiezzz app
+ -->
+
+{% extends "thriftiezzz/base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">Update Profile</h1>
+
+<form method="POST" enctype="multipart/form-data" class="form-container">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+
+    <a href="{% url 'thriftiezzz:show_profile' profile.pk %}" class="btn btn-secondary">
+        Cancel
+    </a>
+</form>
+
+{% endblock %}
