@@ -38,7 +38,6 @@
             {% if request.user.is_authenticated and profile.user == request.user %}
                 <div class="profile-actions">
                     <a href="{% url 'thriftiezzz:update_profile' profile.pk %}" class="btn btn-primary">Update Profile</a>
-                    <a href="{% url 'thriftiezzz:delete_profile' profile.pk %}" class="btn btn-danger">Delete Profile</a>
                     <a href="{% url 'thriftiezzz:show_cart' profile.pk %}" class="btn btn-secondary">View Cart</a>
                 </div>
             {% endif %}

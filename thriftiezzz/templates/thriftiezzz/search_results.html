@@ -1,0 +1,54 @@
+<!-- thriftiezzz/templates/thriftiezzz/search_results.html -->
+<!-- zverdieu@bu.edu -->
+<!-- Description: Search results page -->
+
+{% extends 'thriftiezzz/base.html' %}
+
+{% block content %}
+<div class="search-results">
+    <h1>Search Results for "{{ query }}"</h1>
+
+    {% if profiles or posts %}
+        
+        {% if profiles %}
+        <section class="results-section">
+            <h2>Profiles ({{ profiles.count }})</h2>
+            <div class="profiles-grid">
+                {% for profile in profiles %}
+                <div class="profile-card">
+                    {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="{{ profile.username }}">
+                    {% endif %}
+                    <h3>{{ profile.username }}</h3>
+                    <p>{{ profile.email }}</p>
+                    <a href="{% url 'thriftiezzz:show_profile' profile.pk %}" class="button">View Profile</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if posts %}
+        <section class="results-section">
+            <h2>Posts ({{ posts.count }})</h2>
+            <div class="posts-grid">
+                {% for post in posts %}
+                <div class="post-card">
+                    {% if post.picture %}
+                    <img src="{{ post.picture.url }}" alt="{{ post.name }}">
+                    {% endif %}
+                    <h3>{{ post.name }}</h3>
+                    <p>{{ post.description|truncatewords:20 }}</p>
+                    <p class="price">${{ post.price }}</p>
+                    <a href="{% url 'thriftiezzz:show_clothing_post' post.pk %}" class="button">View Post</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+    {% else %}
+        <p class="no-results">No results found for "{{ query }}". Try a different search term.</p>
+    {% endif %}
+</div>
+{% endblock %}

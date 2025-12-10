@@ -19,8 +19,14 @@
             </div>
 
             <div class="nav-right">
+                
+                <!-- Search bar always visible -->
+                <form action="{% url 'thriftiezzz:search' %}" method="GET" class="search-form">
+                    <input type="text" name="query" placeholder="Search..." class="search-input">
+                    <button type="submit" class="search-button">Search</button>
+                </form>
 
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and current_profile %}
                     <!-- Logged-in Nav -->
 
                     <a href="{% url 'thriftiezzz:show_profile' current_profile.pk %}" class="nav-link">
@@ -31,14 +37,9 @@
                         Cart
                     </a>
 
-                    <a href="{% url 'thriftiezzz:search' %}" class="nav-link">
-                        Search
+                    <a href="{% url 'thriftiezzz:logout' %}" class="nav-button">
+                        Logout
                     </a>
-
-                    <form action="{% url 'thriftiezzz:logout' %}" method="POST" class="nav-form">
-                        {% csrf_token %}
-                        <input type="submit" value="Logout" class="nav-button">
-                    </form>
 
                 {% else %}
 
@@ -59,6 +60,7 @@
 
         <footer class="footer">
             <p>&#169; 2025 Thriftiezzz. Created by zverdieu@bu.edu.</p>
+        </footer>
 
     </body>
 </html>
