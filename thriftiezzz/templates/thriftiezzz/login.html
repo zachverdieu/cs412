@@ -1,0 +1,32 @@
+<!-- File: templates/thriftiezzz/login.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 12/8/2025
+ Description: Login page for thriftiezzz app
+-->
+
+{% extends "thriftiezzz/base.html" %}
+
+{% block content %}
+
+<h1>Login to Thriftiezzz</h1>
+
+<div class="login-form">
+
+    <form action="{% url 'thriftiezzz:login' %}" method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        {# If Django provided a ?next= parameter, use it #}
+        {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% else %}
+            {# Default redirect after login (same pattern as mini_insta) #}
+            <input type="hidden" name="next" value="{% url 'thriftiezzz:show_all_clothing_posts' %}">
+        {% endif %}
+
+        <input type="submit" value="Login" class="btn btn-primary">
+    </form>
+
+</div>
+
+{% endblock %}

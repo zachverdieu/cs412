@@ -333,7 +333,7 @@ class SearchView(LoginRequiredMixin, ListView):
     def get_login_url(self):
         '''return URL for login page when trying to search but not logged in'''
 
-        return reverse('blog:login')
+        return reverse('mini_insta:login')
 
 class LogoutConfirmationView(TemplateView):
     '''view to display logout confirmation page'''

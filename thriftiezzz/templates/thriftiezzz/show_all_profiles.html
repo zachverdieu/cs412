@@ -1,0 +1,54 @@
+<!-- File: templates/thriftiezzz/show_all_profiles.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 12/8/2025
+ Description: Html template for show_all_profiles page for thriftiezzz app
+ -->
+
+{% extends "thriftiezzz/base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">All Profiles</h1>
+
+<div class="profiles-grid">
+    {% for profile in profiles %}
+        <div class="profile-card">
+
+            <!-- Profile Picture -->
+            {% if profile.profile_picture %}
+                <a href="{% url 'thriftiezzz:show_profile' profile.pk %}">
+                    <img src="{{ profile.profile_picture.url }}" 
+                         alt="{{ profile.username }}" 
+                         class="profile-image">
+                </a>
+            {% else %}
+                <a href="{% url 'thriftiezzz:show_profile' profile.pk %}">
+                    <div class="profile-image placeholder">
+                        No Image
+                    </div>
+                </a>
+            {% endif %}
+
+            <!-- Profile Username -->
+            <div class="profile-info">
+                <a href="{% url 'thriftiezzz:show_profile' profile.pk %}" class="profile-name">
+                    {{ profile.username }}
+                </a>
+
+                <!-- Show extra fields if they exist -->
+                {% if profile.email %}
+                    <p class="profile-email">{{ profile.email }}</p>
+                {% endif %}
+
+                <p class="profile-stats">
+                    Posts: {{ profile.num_posts }} <br>
+                    Purchases: {{ profile.num_purchases }}
+                </p>
+            </div>
+
+        </div>
+    {% empty %}
+        <p>No profiles available yet.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

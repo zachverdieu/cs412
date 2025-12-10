@@ -1,0 +1,75 @@
+<!-- File: templates/thriftiezzz/show_cart.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu)
+ Description: Cart page template for thriftiezzz app
+-->
+
+{% extends "thriftiezzz/base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">Your Cart</h1>
+
+<a href="{% url 'thriftiezzz:show_profile' cart.profile.pk %}" class="btn btn-secondary">
+    ← Return to Profile
+</a>
+
+<hr>
+
+{% if cart.clothing_posts.all %}
+    <div class="cart-items-grid">
+
+        {% for item in cart.clothing_posts.all %}
+            <div class="cart-item-card">
+
+                <!-- CLICKABLE AREA (entire top part of card) -->
+                <a href="{% url 'thriftiezzz:show_clothing_post' item.pk %}" class="cart-item-link">
+
+                    {% if item.picture %}
+                        <img src="{{ item.picture.url }}" alt="{{ item.name }}" class="cart-item-image">
+                    {% else %}
+                        <div class="cart-item-image placeholder">No Image</div>
+                    {% endif %}
+
+                    <div class="cart-item-info">
+                        <h3 class="cart-item-name">{{ item.name }}</h3>
+                        <p class="cart-item-price">${{ item.price }}</p>
+
+                        {% if item.is_sold %}
+                            <p class="sold-tag">SOLD</p>
+                        {% endif %}
+                    </div>
+
+                </a>
+
+                <!-- REMOVE FROM CART BUTTON -->
+                <form method="POST" action="{% url 'thriftiezzz:show_cart' cart.profile.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value="{{ item.pk }}">
+                    <button type="submit" class="btn btn-danger small-btn">
+                        Remove
+                    </button>
+                </form>
+
+                <!-- CHECKOUT BUTTON -->
+                {% if not item.is_sold %}
+                    <a href="{% url 'thriftiezzz:purchase_post' cart.profile.pk item.pk %}"
+                       class="btn btn-success small-btn">
+                        Checkout
+                    </a>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <hr>
+
+    <h3>Total Items: {{ cart.total_items }}</h3>
+    <h3>Total Price: ${{ cart.total_price }}</h3>
+
+{% else %}
+    <p>Your cart is empty.</p>
+{% endif %}
+
+{% endblock %}

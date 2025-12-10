@@ -21,8 +21,26 @@ from .forms import (
     CreateClothingPostForm,
     CreateReviewForm,
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class ClothingPostListView(ListView):
+class CurrentProfileMixin:
+    """Adds current_profile to the context if the user is logged in."""
+
+    def get_current_profile(self):
+        if self.request.user.is_authenticated:
+            try:
+                return self.request.user.thrift_profile
+            except Profile.DoesNotExist:
+                return None
+        return None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["current_profile"] = self.get_current_profile()
+        return context
+
+
+class ClothingPostListView(CurrentProfileMixin, ListView):
     '''Display all clothing posts in a random order.'''
 
     model = ClothingPost
@@ -33,7 +51,7 @@ class ClothingPostListView(ListView):
         '''Return QuerySet of available ClothingPost objects in random order.'''
         return ClothingPost.objects.filter(is_sold=False).order_by('?')
 
-class ProfileListView(ListView):
+class ProfileListView(CurrentProfileMixin, ListView):
     '''Display all profiles.'''
 
     model = Profile
@@ -41,7 +59,7 @@ class ProfileListView(ListView):
     context_object_name = "profiles"
 
 
-class ClothingPostDetailView(DetailView):
+class ClothingPostDetailView(CurrentProfileMixin, DetailView):
     '''Display a single clothing item post.'''
 
     model = ClothingPost
@@ -59,7 +77,7 @@ class ClothingPostDetailView(DetailView):
         return context
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(CurrentProfileMixin, DetailView):
     '''Display a single profile.'''
 
     model = Profile
@@ -67,7 +85,7 @@ class ProfileDetailView(DetailView):
     context_object_name = "profile"
 
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(CurrentProfileMixin, LoginRequiredMixin, UpdateView):
     '''View to handle update of a profile based on its PK.'''
 
     model = Profile
@@ -76,7 +94,7 @@ class UpdateProfileView(UpdateView):
     context_object_name = "profile"
 
 
-class CreateProfileView(CreateView):
+class CreateProfileView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
     '''View for creating a new profile.'''
 
     model = Profile
@@ -84,7 +102,30 @@ class CreateProfileView(CreateView):
     template_name = "thriftiezzz/create_profile_form.html"
     context_object_name = "profile"
 
-class CreateClothingPostView(CreateView):
+    def get_context_data(self, **kwargs):
+        '''Return a dictionary containing context variables for use in this template'''
+
+        # superclass method
+        context = super().get_context_data()
+
+        context['user_form'] = UserCreationForm()
+        return context
+
+    def form_valid(self, form):
+        '''creates a new user object in addition to the profile created upon form submission'''
+
+        # reconstruct UserCreationForm instance
+        user_form = UserCreationForm(self.request.POST)
+        # save the UserCreationForm to get the new user
+        user = user_form.save()
+        # Log the User in
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        # attach django User to Profile instance object
+        form.instance.user = user
+
+        return super().form_valid(form)
+
+class CreateClothingPostView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
     '''Create a new clothing post for a given profile.'''
 
     model = ClothingPost
@@ -120,7 +161,7 @@ class CreateClothingPostView(CreateView):
         profile = self.get_object()
         return reverse('thriftiezzz:show_profile', kwargs={'pk': profile.pk})
 
-class UpdateClothingPostView(UpdateView):
+class UpdateClothingPostView(CurrentProfileMixin, LoginRequiredMixin, UpdateView):
     '''View to handle update of a clothing post based on its PK.'''
 
     model = ClothingPost
@@ -129,7 +170,7 @@ class UpdateClothingPostView(UpdateView):
     context_object_name = "post"
 
 
-class DeleteClothingPostView(DeleteView):
+class DeleteClothingPostView(CurrentProfileMixin, LoginRequiredMixin, DeleteView):
     '''View class to delete a clothing post.'''
 
     model = ClothingPost
@@ -157,7 +198,7 @@ class DeleteClothingPostView(DeleteView):
         return reverse('thriftiezzz:show_profile', kwargs={'pk': post.profile.pk})
 
 
-class SearchView(ListView):
+class SearchView(CurrentProfileMixin, ListView):
     '''View to search for user profiles, posts, and descriptions.'''
 
     model = Profile
@@ -204,7 +245,7 @@ class SearchView(ListView):
 
         return context
 
-class CartDetailView(DetailView):
+class CartDetailView(CurrentProfileMixin, LoginRequiredMixin, DetailView):
     '''Display the cart belonging to a given profile.'''
 
     model = Cart
@@ -235,7 +276,7 @@ class CartDetailView(DetailView):
         return redirect('thriftiezzz:show_cart', pk=cart.profile.pk)
 
 
-class AddToCartView(TemplateView):
+class AddToCartView(CurrentProfileMixin, LoginRequiredMixin, TemplateView):
     '''Add a clothing post to a profile's cart (creating the cart if needed).'''
 
     def dispatch(self, request, *args, **kwargs):
@@ -257,7 +298,7 @@ class AddToCartView(TemplateView):
         # Redirect to the cart page
         return redirect('thriftiezzz:show_cart', pk=profile.pk)
 
-class CreateReviewView(CreateView):
+class CreateReviewView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
     '''Create a new review for a clothing post.'''
 
     model = Review
@@ -301,7 +342,7 @@ class CreateReviewView(CreateView):
         return reverse('thriftiezzz:post', kwargs={'pk': post.pk})
 
 
-class PurchaseView(TemplateView):
+class PurchaseView(CurrentProfileMixin, LoginRequiredMixin, TemplateView):
     """
     Handles:
     - Purchasing ONE clothing post (if post_pk is provided)
@@ -414,4 +455,10 @@ class PurchaseView(TemplateView):
         cart.clothing_posts.clear()
 
         return redirect("thriftiezzz:show_profile", pk=buyer.pk)
+
+class LogoutConfirmationView(CurrentProfileMixin, TemplateView):
+    '''view to display logout confirmation page'''
+
+    template_name = "thriftiezzz/logged_out.html"
+
 
