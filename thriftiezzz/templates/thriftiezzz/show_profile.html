@@ -9,10 +9,6 @@
 
 <div class="profile-detail">
 
-    <!-- ====================== -->
-    <!--     PROFILE HEADER     -->
-    <!-- ====================== -->
-
     <div class="profile-header">
 
         {% if profile.profile_picture %}
@@ -45,10 +41,6 @@
         </div>
     </div>
 
-
-    <!-- ====================== -->
-    <!--      USER'S CART       -->
-    <!-- ====================== -->
 
     {% if request.user.is_authenticated and profile.user == request.user %}
         <hr>

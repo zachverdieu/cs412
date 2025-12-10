@@ -1,0 +1,142 @@
+<!-- File: templates/thriftiezzz/purchase.html
+ Author: Zacharie Verdieu (zverdieu@bu.edu), 12/9/2025
+ Description: Purchase confirmation page for single posts or entire cart
+-->
+
+{% extends "thriftiezzz/base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">Confirm Your Purchase</h1>
+
+<div class="purchase-container">
+
+    {% if post %}
+   
+
+        <h2>You're about to purchase this item:</h2>
+
+        <div class="post-preview-card">
+
+            {% if post.picture %}
+                <a href="{% url 'thriftiezzz:show_clothing_post' post.pk %}">
+                    <img src="{{ post.picture.url }}" alt="{{ post.name }}" class="post-preview-image">
+                </a>
+            {% else %}
+                <a href="{% url 'thriftiezzz:show_clothing_post' post.pk %}">
+                    <div class="post-preview-image placeholder">
+                        No Image Available
+                    </div>
+                </a>
+            {% endif %}
+
+            <div class="post-preview-info">
+                <a href="{% url 'thriftiezzz:show_clothing_post' post.pk %}" class="post-name">
+                    {{ post.name }}
+                </a>
+
+                <p class="post-price">${{ post.price }}</p>
+
+                {% if post.size or post.color or post.condition %}
+                    <p class="post-meta">
+                        {% if post.size %}Size: {{ post.size }}{% endif %}
+                        {% if post.color %}
+                            {% if post.size %} | {% endif %}
+                            Color: {{ post.color }}
+                        {% endif %}
+                        {% if post.condition %}
+                            {% if post.size or post.color %} | {% endif %}
+                            Condition: {{ post.condition }}
+                        {% endif %}
+                    </p>
+                {% endif %}
+
+                <p class="post-seller">
+                    Seller:
+                    <a href="{% url 'thriftiezzz:show_profile' post.profile.pk %}">
+                        {{ post.profile.username }}
+                    </a>
+                </p>
+            </div>
+
+        </div>
+
+        <div class="purchase-total">
+            <strong>Total:</strong> ${{ post.price }}
+        </div>
+
+    {% elif cart %}
+
+
+        <h2>You're about to purchase the items in your cart:</h2>
+
+        {% if cart.clothing_posts.all %}
+            <div class="posts-grid">
+                {% for item in cart.clothing_posts.all %}
+                    <a href="{% url 'thriftiezzz:show_clothing_post' item.pk %}" class="post-card-link">
+                        <div class="post-card">
+
+                            {% if item.picture %}
+                                <img src="{{ item.picture.url }}" alt="{{ item.name }}" class="post-image">
+                            {% else %}
+                                <div class="post-image placeholder">
+                                    No Image
+                                </div>
+                            {% endif %}
+
+                            <div class="post-info">
+                                <div class="post-name">{{ item.name }}</div>
+                                <p class="post-price">${{ item.price }}</p>
+
+                                {% if item.size or item.color or item.condition %}
+                                    <p class="post-meta">
+                                        {% if item.size %}Size: {{ item.size }}{% endif %}
+                                        {% if item.color %}
+                                            {% if item.size %} | {% endif %}
+                                            Color: {{ item.color }}
+                                        {% endif %}
+                                        {% if item.condition %}
+                                            {% if item.size or item.color %} | {% endif %}
+                                            Condition: {{ item.condition }}
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <div class="purchase-total">
+                <strong>Total:</strong>
+                ${{ cart.total_price|default:"0.00" }}
+            </div>
+
+        {% else %}
+            <p>Your cart is empty. There’s nothing to purchase.</p>
+        {% endif %}
+
+    {% else %}
+        <p>No items found to purchase.</p>
+    {% endif %}
+
+
+    {% if post or cart %}
+        <div class="purchase-actions">
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">
+                    Confirm Purchase
+                </button>
+            </form>
+
+            <button type="button" class="btn btn-secondary" onclick="history.back()">
+                Cancel
+            </button>
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

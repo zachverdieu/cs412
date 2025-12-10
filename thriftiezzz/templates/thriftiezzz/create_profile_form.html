@@ -11,7 +11,33 @@
 
 <form method="POST" enctype="multipart/form-data" class="form-container">
     {% csrf_token %}
-    {{ form.as_p }}
+    
+    <!-- Django User Creation Fields -->
+    <h2>Account Information</h2>
+    {% for field in user_form %}
+    <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+            <span class="error">{{ field.errors }}</span>
+        {% endif %}
+        {% if field.help_text %}
+            <small class="help-text">{{ field.help_text }}</small>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Profile Fields -->
+    <h2>Profile Information</h2>
+    {% for field in form %}
+    <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+            <span class="error">{{ field.errors }}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
 
     <button type="submit" class="btn btn-primary">Create Profile</button>
 

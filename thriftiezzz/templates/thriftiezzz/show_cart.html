@@ -65,8 +65,15 @@
 
     <hr>
 
-    <h3>Total Items: {{ cart.total_items }}</h3>
-    <h3>Total Price: ${{ cart.total_price }}</h3>
+    <div class="cart-summary">
+        <h3>Total Items: {{ cart.total_items }}</h3>
+        <h3>Total Price: ${{ cart.total_price }}</h3>
+        
+        <a href="{% url 'thriftiezzz:purchase_cart' pk=cart.profile.pk %}" 
+           class="btn btn-primary btn-large">
+            Purchase All Items
+        </a>
+    </div>
 
 {% else %}
     <p>Your cart is empty.</p>

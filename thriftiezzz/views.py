@@ -22,6 +22,8 @@ from .forms import (
     CreateReviewForm,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 class CurrentProfileMixin:
     """Adds current_profile to the context if the user is logged in."""
@@ -66,15 +68,7 @@ class ClothingPostDetailView(CurrentProfileMixin, DetailView):
     template_name = "thriftiezzz/show_clothing_post.html"
     context_object_name = "post"
 
-    def get_context_data(self, **kwargs):
-        '''supplies context variables for this view'''
-
-        context = super().get_context_data(**kwargs)
-
-        current_profile = self.request.user.thrift_profile
-        post = ClothingPost.objects.get(pk = self.kwargs['pk'])
-        context['current_profile'] = current_profile
-        return context
+   
 
 
 class ProfileDetailView(CurrentProfileMixin, DetailView):
@@ -94,7 +88,7 @@ class UpdateProfileView(CurrentProfileMixin, LoginRequiredMixin, UpdateView):
     context_object_name = "profile"
 
 
-class CreateProfileView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
+class CreateProfileView(CurrentProfileMixin, CreateView):
     '''View for creating a new profile.'''
 
     model = Profile
@@ -106,7 +100,7 @@ class CreateProfileView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
         '''Return a dictionary containing context variables for use in this template'''
 
         # superclass method
-        context = super().get_context_data()
+        context = super().get_context_data(**kwargs)
 
         context['user_form'] = UserCreationForm()
         return context
@@ -116,14 +110,32 @@ class CreateProfileView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
 
         # reconstruct UserCreationForm instance
         user_form = UserCreationForm(self.request.POST)
+        
+        # Validate the user form
+        if not user_form.is_valid():
+            # Add user_form back to context with errors
+            context = self.get_context_data(form=form)
+            context['user_form'] = user_form  # Include the form with errors
+            return self.render_to_response(context)
+        
         # save the UserCreationForm to get the new user
         user = user_form.save()
+        
         # Log the User in
         login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        
         # attach django User to Profile instance object
         form.instance.user = user
+        
+        # Copy username from User to Profile if needed
+        form.instance.username = user.username
 
         return super().form_valid(form)
+
+    def get_success_url(self):
+        '''Redirect to the newly created profile page after submission.'''
+
+        return reverse('thriftiezzz:show_profile', kwargs={'pk': self.object.pk})
 
 class CreateClothingPostView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
     '''Create a new clothing post for a given profile.'''
@@ -339,7 +351,7 @@ class CreateReviewView(CurrentProfileMixin, LoginRequiredMixin, CreateView):
         '''Redirect back to the clothing post detail page after creating a review.'''
 
         post = self.get_object()
-        return reverse('thriftiezzz:post', kwargs={'pk': post.pk})
+        return reverse('thriftiezzz:show_clothing_post', kwargs={'pk': post.pk})
 
 
 class PurchaseView(CurrentProfileMixin, LoginRequiredMixin, TemplateView):

@@ -6,7 +6,7 @@
 <html>
     <head>
         <title>Thriftiezzz</title>
-        <link rel="stylesheet" href="{% static 'styles-thriftiezzz.css' %}">
+        <link rel="stylesheet" href="{% static 'thriftiezzz.css' %}">
     </head>
 
     <body>
@@ -37,9 +37,10 @@
                         Cart
                     </a>
 
-                    <a href="{% url 'thriftiezzz:logout' %}" class="nav-button">
-                        Logout
-                    </a>
+                    <form action="{% url 'thriftiezzz:logout' %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-button">Logout</button>
+                    </form>
 
                 {% else %}
 

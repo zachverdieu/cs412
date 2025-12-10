@@ -97,4 +97,40 @@
 
 </div>
 
+<hr>
+
+<!-- REVIEWS SECTION -->
+<div class="reviews-section">
+    <h2>Reviews</h2>
+
+    {% if request.user.is_authenticated and current_profile and post.profile != current_profile %}
+        <a href="{% url 'thriftiezzz:create_review' current_profile.pk post.pk %}" class="btn btn-primary">
+            Write a Review
+        </a>
+    {% endif %}
+
+    {% if post.get_all_reviews %}
+        <div class="reviews-list">
+            {% for review in post.get_all_reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <strong>
+                            <a href="{% url 'thriftiezzz:show_profile' review.profile.pk %}">
+                                {{ review.profile.username }}
+                            </a>
+                        </strong>
+                        <span class="review-rating">Rating: {{ review.rating }}/5</span>
+                    </div>
+                    <p class="review-date">{{ review.review_date|date:"M d, Y" }}</p>
+                    {% if review.comment %}
+                        <p class="review-comment">{{ review.comment }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No reviews yet. Be the first to review this item!</p>
+    {% endif %}
+</div>
+
 {% endblock %}
